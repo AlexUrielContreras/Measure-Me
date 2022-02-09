@@ -1,25 +1,21 @@
-
 .brand-logo {
-    margin-left: 15px;
+  margin-left: 15px;
 }
 .background-img {
-    background-image: url("../images/heroPic.jpg");
-    height: 200px;
+  background-image: url("../images/heroPic.jpg");
+  height: 200px;
 }
 h2 {
-    margin: 0 0;
-    padding-top: 70px;
-    font-weight: bold;
-    letter-spacing: 5px;
-    
+  margin: 0 0;
+  padding-top: 70px;
+  font-weight: bold;
+  letter-spacing: 5px;
 }
 .search-form {
-   /* background-color: #e1f5fe ; */
-    padding: 20px 0;
+  /* background-color: #e1f5fe ; */
+  padding: 20px 0;
 }
 .submit-btn {
-    font-size: 25px;
-    border-radius: 10px;
-  
-    
+  font-size: 25px;
+  border-radius: 10px;
 }
