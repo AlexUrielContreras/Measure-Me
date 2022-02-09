@@ -3,13 +3,13 @@ var imgGiphy = document.getElementById("giphy-img");
 var searchedTerm = document.getElementById("search-form");
 
 var giphySearch = function (keyword) {
-  var url = `https://api.giphy.com/v1/gifs/search?q=${keyword}&api_key=${apiKey}&limit=1`;
+  var url = `https://api.giphy.com/v1/gifs/search?q=${keyword}&api_key=${apiKey}&limit=1&rating=pg`;
 
   fetch(url).then(function (response) {
     if (response.ok) {
       response.json().then((data) => {
         const rUrl = data.data[0].images.original.url;
-        console.log(data.data[0]);
+
         imgGiphy.src = rUrl;
       });
     }
