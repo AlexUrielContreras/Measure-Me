@@ -27,6 +27,24 @@ var convert = function () {
 };
 
 //----------------------------------------RECIPE-KT-------------------------------------------/
+function hideUnitBox(){
+  $("#unit_box").hide();
+}
+
+function showUnitBox(){
+  $("#unit_box").show(1000);
+}
+//--------------------------//
+
+function hideRecipeBox(){
+  $("#recipe_box").hide();
+}
+
+function showRecipeBox(){
+  $("#recipe_box").show(1000);
+}
+
+// Create elements and populate them with data returned from an recipe api fetch
 function displayRecipeHits(food_data){
   console.log(food_data);
   
@@ -36,8 +54,8 @@ function displayRecipeHits(food_data){
   $("#target_recipe").empty();
   }
 
-  // -- display up to 3 recipes
-  for (var j = 0; j < 3 ; j++)
+  // -- display up to 5 recipes
+  for (var j = 0; j < 5 ; j++)
   {
     var recipeNameForHeader = food_data.hits[j].recipe.label;
     var recipe_search_term = $("<h3>");
@@ -70,8 +88,8 @@ function displayRecipeHits(food_data){
     howtoRedirect.text(DIRECTION_INFO);
 
     var recipeSource = $("<a>")  
-    recipeSource.text(SOURCE_INFO);
-    recipeSource.html(SPACE + SOURCE_INFO + SPACE + food_data.hits[j].recipe.source);
+    // recipeSource.text(SOURCE_INFO);
+    recipeSource.html(HTML_DSPACE + SOURCE_INFO + SPACE + food_data.hits[j].recipe.source);
     
     recipe_direction.append(howtoRedirect);
     recipe_direction.append(recipeSource);
@@ -177,12 +195,13 @@ function displayRecipeHits(food_data){
                       .append(nutrient_info);
   }
 
- $("#recipe_box").show(1000);
+  showRecipeBox();
+  showUnitBox();
 
 }
 
-var getRecipeEntity = function(recipephrase){
-
+var getRecipeEntity = function(recipephrase)
+{
   // // currentLocalStorageSize = localStorage.length;   
   // // searchClick = (currentLocalStorageSize) ? currentLocalStorageSize : 0;
   // // // alert("searchClick value per storageLength: " + searchClick);
@@ -196,7 +215,8 @@ var getRecipeEntity = function(recipephrase){
   // // searchRecord.push(searchByClicking);
   // //  localStorage.setItem(searchByClicking.searchTerm + UNDERSCORE + searchByClicking.searchID, JSON.stringify(searchByClicking));
 
-   console.log(recipephrase);
+  console.log(recipephrase);
+
   //  -- cuisine-type defaults to American if not specified otherwise:
   apiFoodUrl = 'https://api.edamam.com/api/recipes/v2?app_id=' + APP_ID + '&app_key=' + API_KEY + '&type=public&cuisineType=american&q=' + recipephrase;
   console.log("Inside getRecipeEntity : " + apiFoodUrl);
@@ -209,7 +229,7 @@ var getRecipeEntity = function(recipephrase){
           {
               food_response.json().then(function(food_data)
               {
-                // console.log(food_data);
+              // console.log(food_data);
               // -- action
               displayRecipeHits(food_data);
           });
@@ -219,7 +239,7 @@ var getRecipeEntity = function(recipephrase){
               console.log("Error: Recipe Data Not Found"); // status 400
           }
         
-    })// ; remove semicolon bc it's not ended yet
+    })  
     .catch(function(error){
         console.log("An error has occured: " + error);
     }); // it ends here
@@ -244,6 +264,8 @@ var formSubmitHandler = function(event){
 }
 
 recipeSearchFormEl.addEventListener("submit", formSubmitHandler);
-$("#recipe_box").hide();
+hideRecipeBox();
+hideUnitBox();
+ 
 
 

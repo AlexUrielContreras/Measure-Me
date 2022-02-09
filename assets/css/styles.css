@@ -20,22 +20,16 @@
     padding-left: 0;
     padding-top: 35px;
     font-weight: bold;
-    letter-spacing: 6px;
-
-    /* Option 1: White Theme on app text ---------- */
+    letter-spacing: 8px;
     color:white;
     text-shadow: -2px 2px 1px rgb(80, 201, 185) ;    
-    /* Option 1: -----------------------------------*/
-
-    /* Option 2: Default Black Theme on app text----*/
-    /* text-shadow: -2px 2px 1px whitesmoke; */
-    /* Option 2:------------------------------------*/
     
 }
 .submit-btn {
     font-size: 25px;
     border-radius: 10px;
 }
+
 .recipe-box, .unit-box {
     margin-top: 20px;
     border: 1px dashed #9e9e9e; border-radius: 5px;
@@ -47,6 +41,11 @@
     margin: 0 5px 0 0;
     padding: 0 5px 0 0;
 }
+
+.recipe-box a{
+    margin: 0 5px;
+    padding: 0 10px;
+ }
  
 .unit-box {
     justify-content: flex-end;
@@ -78,27 +77,27 @@ select {
     padding: 0;
     }
 
-    #target_recipe::-webkit-scrollbar-track
-    {
-    border: 1px solid #dddfdf;
-    background-color:  whitesmoke;
-    }
+#target_recipe::-webkit-scrollbar-track
+{
+border: 1px solid #dddfdf;
+background-color:  whitesmoke;
+}
 
-    #target_recipe::-webkit-scrollbar
-    {
-    width: 9px !important;
-    background-color: #9e9e9e;
-    }
+#target_recipe::-webkit-scrollbar
+{
+width: 9px !important;
+background-color: #9e9e9e;
+}
 
-    #target_recipe::-webkit-scrollbar-thumb
-    {
-    background-color: #9e9e9e;
-    background-image: -webkit-gradient(linear,
-                    left bottom,
-                    left top,
-                    color-stop(0.78, #363636),
-                    color-stop(0.57, #9e9e9e),
-                    color-stop(0.30, #363636));
-    }
+#target_recipe::-webkit-scrollbar-thumb
+{
+background-color: #9e9e9e;
+background-image: -webkit-gradient(linear,
+                left bottom,
+                left top,
+                color-stop(0.78, #363636),
+                color-stop(0.57, #9e9e9e),
+                color-stop(0.30, #363636));
+}
 
   
