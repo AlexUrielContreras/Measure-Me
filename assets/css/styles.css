@@ -19,3 +19,11 @@ h2 {
   font-size: 25px;
   border-radius: 10px;
 }
+.recipe-box,
+.unit-box {
+  margin-top: 35px;
+}
+
+.unit-box {
+  justify-content: flex-end;
+}
