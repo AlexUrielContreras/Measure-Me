@@ -18,6 +18,11 @@ h2 {
 .submit-btn {
   font-size: 25px;
   border-radius: 10px;
+  background-color: #81d4fa;
+
+}
+.submit-btn:hover {
+  background-color: rgb(80, 201, 185);
 }
 .recipe-box,
 .unit-box {
