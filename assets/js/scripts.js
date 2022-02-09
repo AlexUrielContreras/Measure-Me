@@ -20,6 +20,6 @@ function onFormSubmit() {
 
   giphySearch(searchedTerm);
 }
-giphySearch();
+
 
 btn.addEventListener("click", onFormSubmit);
