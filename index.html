@@ -17,57 +17,110 @@
     <header>
       <nav>
         <div class="nav-wrapper light-blue lighten-3">
-          <a href="#" class="brand-logo">Placeholder</a>
+          <a href="index.html" class="brand-logo">Millennium  Greenfield Distributor</a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="/">Placeholder</a></li>
-            <li><a href="/">Placeholder</a></li>
-            <li><a href="/">Placeholder</a></li>
+            <li><a href="/">About</a></li>
+            <li><a href="/">Investor Relations</a></li>
+            <li><a href="/">Contact Us</a></li>
           </ul>
         </div>
       </nav>
     </header>
     <section class="background-img">
-<<<<<<< HEAD
-        <h2 class="center-align hero-title">Measure Me</h2>
-=======
-      <h2 class="center-align">Measure Me</h2>
->>>>>>> 475dbcbf875309511005b46a126815c0d322e818
+        <h1 class="center-align hero-title">Measure Me</h1>
     </section>
     <main>
       <section>
         <div class="container">
-          <form class="search-form row">
+          <form class="search-form row" id="recipe_form">
+            
             <h4 class="search-title">Search for a Recipe</h4>
+            <label for="meal_type">Meal Type:</label>
+              <select id="meal_type" name="meal_type">
+                <option value="">Choose an option</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Dinner"> Dinner</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Snack">Snack</option>
+              </select>
+             
+              <label for="dish_type">Dish Type</label>
+              <select id="dish_type" name="dish_type">
+                <option value="">Choose an option</option>
+                <option value="Starter">Starter</option>
+                <option value="Main course">Main course</option>
+                <option value="Bread">Bread</option>
+                <option value="Salad">Salad</option>
+                <option value="Sandwiches">Sandwiches</option>
+                <option value="Soup">Soup</option>
+                <option value="Desserts">Desserts</option>
+                <option value="Sweets">Sweets</option>
+                <option value="Condiments and sauces">Condiments and sauces</option>
+              </select>
+             
+              <label for="cuisine_type">Cuisine Type</label>
+              <select id="dish_type" name="dish_type">
+                <option value="American" selected>American</option>
+                <option value="Asian">Asian</option>
+                <option value="British">British</option>
+                <option value="Caribbean">Caribbean</option>
+                <option value="Central Europe">Central Europe</option>
+                <option value="Eastern Europe">Eastern Europe</option>
+                <option value="French">French</option>
+                <option value="Indian">Indian</option>
+                <option value="Italian">Italian</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Mexican">Mexican</option>
+                <option value="Nordic">Nordic</option>
+              </select>
             <div class="search-container">
-              <input class="" type="text" placeholder="Search..">
-              <button class="submit-btn waves-effect waves-light btn  blue-grey lighten-3" type="button">Search</button>
+              <input class="" type="text" placeholder="Example: Smothered Chicken" id="recipe_phrase">
+              <button type="submit" class="submit-btn waves-effect waves-light btn  blue-grey lighten-3">Search</button>
             </div>
           </form>
           <div class="recent-searches"></div>
         </div>
       </section>
+      
       <section class="container">
-        <div class="row content-box">
-          <div class="col s6 recipe-box center-align">
-            <div>
-              <h2 class="center-align"> Recipe </h2>
-            </div>
-            <div class="recipe-content ">
-              <h1>Placeholder</h1>
+        <div class="row content-box" >
+          <div class="col s6 recipe-box" id="recipe_box"> <!-- div id to show or hide -->
+            <div class="recipe-content scrollable" id="target_recipe"> 
+                <!-- energy_fat_carb_fiber_sugar_cholesterol_sodium_calcium -->
+                <!-- <div id="nutrient_info"  ></div>
+                  <h6>
+                    <span class="chem_label"> hits.recipe.totalNutrients.ENERC_KCAL.label</span>
+                    <span class="chem_amount">hits.recipe.totalNutrients.ENERC_KCAL.quantity</span>
+                    <span class="chem_unit">hits.recipe.totalNutrients.ENERC_KCAL.unit</span>
+                  </h6>
+
+                </div> -->
+
+                <!-- <h4> 
+                  <span id="recipe_img_rep">hits.recipe.label.images[1]</span>
+                </h4> -->
+ 
             </div>
           </div>
-          <div class="col s6 unit-box center-align">
+
+
+
+          <!-- <div class="col s6 unit-box center-align">
             <div>
               <h2 class="">Convert Unit</h2>
             </div>
             <div class="unit-content">
               <h1>placehholder</h1>
             </div>
-          </div>
+          </div> -->
 
         </div>
       </section>
     </main>
   </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.15.0/umd/popper.min.js"></script>
+  <!-- jQuery UI is loaded after the core jQuery library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="assets/js/scripts.js"></script>
 </html>
