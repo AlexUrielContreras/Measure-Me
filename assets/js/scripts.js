@@ -20,9 +20,21 @@ const SOURCE_INFO = "Source:"
 var convert = function () {
   var converterApi =
     "https://akshayanand.herokuapp.com/api/unit/?type=type&from=from&to=to&value=value";
+var apiKey = "uBGwsY4j0LWUoSuGrIAM6CknwEkLZxNT";
+var imgGiphy = document.getElementById("giphy-img");
+var searchedTerm = document.getElementById("search-form");
 
-  fetch(converterApi).then(function (response) {
-    console.log(response);
+var giphySearch = function (keyword) {
+  var url = `https://api.giphy.com/v1/gifs/search?q=${keyword}&api_key=${apiKey}&limit=1&rating=pg`;
+
+  fetch(url).then(function (response) {
+    if (response.ok) {
+      response.json().then((data) => {
+        const rUrl = data.data[0].images.original.url;
+
+        imgGiphy.src = rUrl;
+      });
+    }
   });
 };
 
@@ -245,7 +257,7 @@ var getRecipeEntity = function(recipephrase)
     }); // it ends here
 
   }
-
+}
 var recipeSearchFormEl = document.querySelector("#recipe_form");
 var recipeInputEl = document.querySelector("#recipe_phrase");
 
