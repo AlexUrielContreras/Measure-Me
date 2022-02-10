@@ -5,9 +5,11 @@
   background-image: url("../images/heroPic.jpg");
   height: 200px;
 }
+.hero-title {
+  padding-top: 70px;
+}
 h2 {
   margin: 0 0;
-  padding-top: 70px;
   font-weight: bold;
   letter-spacing: 5px;
 }
@@ -29,6 +31,21 @@ h2 {
   margin-top: 35px;
 }
 
-.unit-box {
-  justify-content: flex-end;
+.recipe-contetn ,
+.unit-content {
+  margin-top: 40px;
+}
+
+
+.content-title {
+  border: 5px solid rgb(80, 201, 185);
+  border-radius: 20px;
+  padding: 10px 0;
+}
+.container {
+  margin-top: 40px;
+}
+
+body {
+  background-color: 	#FFFFF0;
 }
