@@ -17,26 +17,6 @@ const INGREDIENT_DESC = "<strong>Ingredients: </strong>";
 const NUTRIENT_INFO = "<strong>Nutrient Infomation: </strong>";
 const DIRECTION_INFO = "Directions";
 const SOURCE_INFO = "Source:"
-var convert = function () {
-  var converterApi =
-    "https://akshayanand.herokuapp.com/api/unit/?type=type&from=from&to=to&value=value";
-var apiKey = "uBGwsY4j0LWUoSuGrIAM6CknwEkLZxNT";
-var imgGiphy = document.getElementById("giphy-img");
-var searchedTerm = document.getElementById("search-form");
-
-var giphySearch = function (keyword) {
-  var url = `https://api.giphy.com/v1/gifs/search?q=${keyword}&api_key=${apiKey}&limit=1&rating=pg`;
-
-  fetch(url).then(function (response) {
-    if (response.ok) {
-      response.json().then((data) => {
-        const rUrl = data.data[0].images.original.url;
-
-        imgGiphy.src = rUrl;
-      });
-    }
-  });
-};
 
 //----------------------------------------RECIPE-KT-------------------------------------------/
 function hideUnitBox(){
@@ -233,31 +213,30 @@ var getRecipeEntity = function(recipephrase)
   apiFoodUrl = 'https://api.edamam.com/api/recipes/v2?app_id=' + APP_ID + '&app_key=' + API_KEY + '&type=public&cuisineType=american&q=' + recipephrase;
   console.log("Inside getRecipeEntity : " + apiFoodUrl);
       
-  fetch(apiFoodUrl)
-    .then(function(food_response) 
+  fetch(apiFoodUrl).then(function(food_response) 
+  {
+    // console.log(food_response); // 404 still display node Response, but headers ok property is false
+    if(food_response.ok)
     {
-          // console.log(food_response); // 404 still display node Response, but headers ok property is false
-          if(food_response.ok)
-          {
-              food_response.json().then(function(food_data)
-              {
-              // console.log(food_data);
-              // -- action
-              displayRecipeHits(food_data);
-          });
-          }
-          else
-          {
-              console.log("Error: Recipe Data Not Found"); // status 400
-          }
+        food_response.json().then(function(food_data)
+        {
+        // console.log(food_data);
+        // -- action
+        displayRecipeHits(food_data);
+    });
+    }
+    else
+    {
+        console.log("Error: Recipe Data Not Found"); // status 400
+    }
         
-    })  
-    .catch(function(error){
-        console.log("An error has occured: " + error);
-    }); // it ends here
+  })  
+  .catch(function(error){
+      console.log("An error has occured: " + error);
+  }); // it ends here
 
-  }
 }
+
 var recipeSearchFormEl = document.querySelector("#recipe_form");
 var recipeInputEl = document.querySelector("#recipe_phrase");
 
