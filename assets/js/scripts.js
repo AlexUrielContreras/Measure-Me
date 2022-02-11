@@ -305,6 +305,8 @@ function displayRecipeGroup(food_data, recipeResultSize)
     return success;
 }
 
+//-------------------------------------Scan unit in desc for dynamic conversion ----------------------
+// (1) scan of whole cups
 function scanCup(ingData){
   var lineDesc = {
     original : ingData,
@@ -340,12 +342,102 @@ function scanCup(ingData){
     }
     else{
        // next group
-       return scanOunce(ingData);
+       lineDesc = null;
     }
   }
-   
+  return lineDesc;
 }
 
+//(3) Scan for table-spoon
+function scanTablespoon(ingData)
+{
+  var found = false;
+  var lineDesc = {
+    original : ingData,
+    preceedingNum: STRING_EMPTY,
+    num: STRING_EMPTY,
+    unit: STRING_EMPTY,
+    desc: STRING_EMPTY,
+    type: utype.TABLESPOON,
+    apirequest: STRING_EMPTY
+  }
+  for( var i = 0; i < commonRecipeUnits.bigspoon.length; i++ )
+  {
+    alert("i'm in for table-spoon loop")
+    found = ingData.indexOf(commonRecipeUnits.bigspoon[i]);
+    if(found != -1)
+    {
+      alert("i'm Found in loop bigspoon")
+      var arr = ingData.split(commonRecipeUnits.bigspoon[i]);
+      console.log(arr);
+      console.log(arr[0]);
+      var existedSlash = arr[0].indexOf(SLASH);
+      console.log(existedSlash);
+      if (existedSlash != -1)
+      {
+        var arrLeft = arr(0);
+        if(arr(0).length <= 3)
+        {
+          if(arrLeft.includes(SLASH))
+          {
+            var vicinitySlashes = arr[0].split(SLASH);
+            alert("ratio is: " + vicinitySlashes[0])
+            lineDesc = {
+              original : ingData,
+              preceedingNum: STRING_EMPTY,
+              num: (parseInt(vicinitySlashes[0]) / parseInt(vicinitySlashes[1]))/2,
+              unit: commonRecipeUnits.ounce[i],
+              desc: arr[arr.length - 1].trim(),
+              type: utype.TABLESPOON,
+              apirequest: "https://neutrinoapi.net/convert?to-type=Liter&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Ounce&from-value="  
+            }
+            return lineDesc;
+          }
+          
+        }
+        else // whole number plus fraction
+        {
+           if(arrLeft.includes(SPACE))
+           {
+              numericArry = arrLeft.split(SPACE);
+              lineDesc = {
+              original : ingData,
+              preceedingNum: STRING_EMPTY,
+              num: parseInt( numericArry[0]) + (parseInt(numericArry[1]) / parseInt(numericArry[2]))/2,
+              unit: commonRecipeUnits.ounce[i],
+              desc: arr[arr.length - 1].trim(),
+              type: utype.TABLESPOON,
+              apirequest: "https://neutrinoapi.net/convert?to-type=Liter&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Ounce&from-value="  
+              }
+            }
+            return lineDesc;
+        }
+
+      } 
+      else // if no slash found, we have whole number
+      {
+        lineDesc = {
+        original : ingData,
+        preceedingNum: STRING_EMPTY,
+        num: parseInt(arr[0])/2,
+        unit: commonRecipeUnits.ounce[i],
+        desc: arr[arr.length - 1].trim(),
+        type: utype.TABLESPOON,
+        apirequest: "https://neutrinoapi.net/convert?to-type=Liter&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Ounce&from-value="  
+        }
+        return lineDesc;
+      }
+    }
+    else // no match at all
+    {
+      lineDesc = null;
+    }
+
+  } // end for
+  return lineDesc;
+}  
+
+// (2) Scan for Ounce
 function scanOunce(ingData)
 {
   var lineDesc = {
@@ -391,10 +483,12 @@ function scanOunce(ingData)
             apirequest: "https://neutrinoapi.net/convert?to-type=Liter&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Pint&from-value="  
           }
           console.log(lineDesc);
+          return lineDesc;
         }
 
       }
-      else{
+      else
+      {
           // -- no parenthesis
           lineDesc = {
             original : ingData,
@@ -407,16 +501,17 @@ function scanOunce(ingData)
           }
           console.log(lineDesc);
       }
-      return lineDesc;
-    }
-    else{
-      var cont = true;
+      
+    } 
+    else // if not found
+    {
+      lineDesc = null;
     }
   }
+  return lineDesc;
 }
 
-
-
+// This handles event when the ingredient line is clicked to get target unit converted
 var ingredientButtonHandler = function(event) {
    
   var lineDesc = {
@@ -437,26 +532,41 @@ var ingredientButtonHandler = function(event) {
     var ingData = targetEl.getAttribute("value").toLowerCase();
     
     var unitEntityHit = scanCup(ingData);
-
     console.log("My result is: " )
     console.log( unitEntityHit)
 
     if(unitEntityHit != null)
     {
+      alert("CUP FOUND!")
       getUnitEntityConvertedPerAPI(unitEntityHit);
     }
     else{
-      console.log("Null encountered");
+      unitEntityHit = scanOunce(ingData);
+      if(unitEntityHit != null)
+      {
+        alert("OUNCE FOUND!")
+        getUnitEntityConvertedPerAPI(unitEntityHit);
+      }
+      else
+      {
+        unitEntityHit = scanTablespoon(ingData);
+        if(unitEntityHit != null)
+        {
+          alert("TABLESPOON FOUND!")
+          getUnitEntityConvertedPerAPI(unitEntityHit);
+        }
+      }
     }
-   
-   
-  } 
+  } // end if
 }
 
 var getUnitEntityConvertedPerAPI = function(lineDesc){
   alert("ready to be converted");
   var apiUnitUrl = lineDesc.apirequest + lineDesc.num;
-  
+  // clear old unit converter content
+  if ($("#target_converting_line").has("<button>")){
+    $("#target_converting_line").empty();
+    }
    
     // // fetch(apiUnitUrl
     // //   
