@@ -3,6 +3,8 @@ const UNDERSCORE = '_'
 const SPACE = ' ';
 const COLON = ': ' ;
 const SLASH = '/'
+const OPEN_PAREN = '(';
+const HYPHEN = '-';
 const PLUS_SIGN = "+ ";
 const HTML_NEXTLINE = "</br>"; 
 const HTML_BULLET = "&bull; ";
@@ -17,26 +19,12 @@ let searchClick = 0;
 
 const SERVER_NUMBER = "<strong>Yield: </strong>";
 const CUISINE_TYPE = "<strong>Cuisine type: </strong>";
-const INGREDIENT_DESC = "<strong>Ingredients: </strong><br>";
+const INGREDIENT_DESC = "<strong>Ingredients: </strong>";
 const NUTRIENT_INFO = "<strong>Nutrient Infomation: </strong>";
 const DIRECTION_INFO = "Directions";
 const SOURCE_INFO = "Source:"
-
-// const VOL_UNIT_CUP = ["cups", "cup"];
-// const VOL_UNIT_OUNCE = ["ounce", "ounces", "oz"];
-// const VOL_UNIT_BIG_SPOON = ["tablespoons","tablespoon", "tbsp.", "tbsp"];
-// const VOL_UNIT_SML_SPOON = ["teaspoons", "teaspoon", "tsp.", "tsp"];
-// const MASS_UNIT_POUND = ["pounds", "pound", "lb." , "lb"];
-// const LENGTH_UNIT = ["inches", "inch"];
-
-// const commonRecipeUnits = {
-//   cup: VOL_UNIT_CUP,
-//   ounce: VOL_UNIT_OUNCE,
-//   bigspoon: VOL_UNIT_BIG_SPOON,
-//   smallspoon: VOL_UNIT_SML_SPOON,
-//   pound: MASS_UNIT_POUND,
-//   inch: LENGTH_UNIT
-// }
+const METRIC = " - Metric";
+const IMPERIAL = "- Imperial";
 
 const commonRecipeUnits = {
   cup: ["cups", "cup"],
@@ -47,23 +35,12 @@ const commonRecipeUnits = {
   inch: ["inches", "inch"]
 }
 
-// var VOL_UNIT_CUP = {cups: "cups", cup: "cup" };
-// var VOL_UNIT_OUNCE = { ounce: "ounce", ounces: "ounces", oz :"oz"};
-// var VOL_UNIT_BIG_SPOON = {tablespoons: "tablespoons",tablespoon:"tablespoon", tbspdot: "tbsp.", tbsp: "tbsp"};
-// 
-// const commonRecipeUnits = [];
-// commonRecipeUnits.push(VOL_UNIT_CUP);
-// commonRecipeUnits.push(VOL_UNIT_OUNCE);
-// commonRecipeUnits.push(VOL_UNIT_BIG_SPOON);
-
-const VolUnit = {
-  CUP: 0,
-  OZ: 2,
+const utype = {
+  OZ: 1,
+  CUP: 2,
   TABLESPOON: 3,
   TEASPOON: 4,
-  LBS: 5,
-  PINT: 6,
-  QUART: 7
+  LBS: 5
 }
 
 //----------------------------------------RECIPE-KT-------------------------------------------/
@@ -141,10 +118,15 @@ function displayRecipeHits(food_data){
   console.log(food_data);
   displayResult = true;
   // -- clear old content
+
   // -- remove old img before append current image
-  if ($("#target_recipe").has("span[class='recipe-box'")){
-  $("#target_recipe").empty();
-  }
+  if ($("#target_recipe").has("img")){
+    $("#target_recipe").empty();
+    }
+
+  // if ($("#target_recipe").has("span[class='recipe-box'")){
+  // $("#target_recipe").empty();
+  // }
 
   if(food_data.hits.length >=5 ){
     // -- display up to 5 recipes
@@ -316,7 +298,7 @@ function displayRecipeGroup(food_data, recipeResultSize)
                         .append(serve_number)
                         .append(cuisine_type)
                         .append(ingredient_desc)
-                        .append(ingredient_desc)
+                        // .append(ingredient_desc)
                         .append(recipe_direction)
                         .append(nutrient_info);
     } // end for loop
@@ -325,11 +307,12 @@ function displayRecipeGroup(food_data, recipeResultSize)
 
 function scanCup(ingData){
   var lineDesc = {
+    original : ingData,
     preceedingNum: STRING_EMPTY,
     num: STRING_EMPTY,
     unit: STRING_EMPTY,
     desc: STRING_EMPTY,
-    found: false,
+    type: utype.CUP,
     apirequest: STRING_EMPTY
   }
    
@@ -344,12 +327,13 @@ function scanCup(ingData){
       var arr = ingData.split(commonRecipeUnits.cup[i]);
       console.log(arr);
       lineDesc = {
+        original : ingData,
         preceedingNum: STRING_EMPTY,
         num: parseInt(arr[0].trim())*2,
         unit: commonRecipeUnits.cup[i],
         desc: arr[arr.length - 1].trim(),
-        found: true,
-        apirequest: "https://neutrinoapi.net/convert?user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Ounce&to-type=Liter&from-value="  
+        type: utype.CUP,
+        apirequest: "https://neutrinoapi.net/convert?to-type=Liter&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Ounce&from-value="  
       }
       console.log(lineDesc);
       return lineDesc;
@@ -365,11 +349,12 @@ function scanCup(ingData){
 function scanOunce(ingData)
 {
   var lineDesc = {
+    original : ingData,
     preceedingNum: STRING_EMPTY,
     num: STRING_EMPTY,
     unit: STRING_EMPTY,
     desc: STRING_EMPTY,
-    found: false,
+    type: utype.OZ,
     apirequest: STRING_EMPTY
   }
   for( var i = 0; i < commonRecipeUnits.ounce.length; i++ )
@@ -383,41 +368,44 @@ function scanOunce(ingData)
       var arr = ingData.split(commonRecipeUnits.ounce[i]);
       console.log(arr);
       console.log(arr[0]);
-      var isParenthesis = arr[0].indexOf('(');
+      var isParenthesis = arr[0].indexOf(OPEN_PAREN);
       console.log(isParenthesis);
       if (isParenthesis != -1)
       {
         alert("i'm Found in loop ounce - parenthesis")
-        var vicinityParenthesis = arr[0].split('(');
+        var vicinityParenthesis = arr[0].split(OPEN_PAREN);
         alert(vicinityParenthesis[0])
         var vicinityRight = vicinityParenthesis[vicinityParenthesis.length - 1];
         console.log(vicinityRight)
-        var vicinityHyphen = (vicinityRight.includes("-")) ? vicinityRight.split('-') : null;
+        var vicinityHyphen = (vicinityRight.includes(HYPHEN)) ? vicinityRight.split(HYPHEN) : null;
         // console.log(vicinityHyphen)
         if(vicinityHyphen != null) {
           alert(parseInt(vicinityHyphen[0]) / 16);
           lineDesc = {
-            preceedingNum: vicinityParenthesis[0],
+            original : ingData,
+            preceedingNum: vicinityParenthesis[0] + OPEN_PAREN,
             num: parseInt(vicinityHyphen[0]) / 16,
             unit: commonRecipeUnits.ounce[i],
             desc: arr[arr.length - 1].trim(),
-            found: true, 
-            apirequest: "https://neutrinoapi.net/convert?user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Pint&to-type=Liter&from-value="  
+            type: utype.OZ, 
+            apirequest: "https://neutrinoapi.net/convert?to-type=Liter&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Pint&from-value="  
           }
           console.log(lineDesc);
         }
 
       }
       else{
-
-        lineDesc = {
-          num: parseInt( arr[0].trim())/16,
-          unit: commonRecipeUnits.ounce[i],
-          desc: arr[arr.length - 1].trim(),
-          found: true,
-          apirequest: "https://neutrinoapi.net/convert?user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Pint&to-type=Liter&from-value="  
-        }
-        console.log(lineDesc);
+          // -- no parenthesis
+          lineDesc = {
+            original : ingData,
+            preceedingNum: STRING_EMPTY,
+            num: parseInt( arr[0].trim())/16,
+            unit: commonRecipeUnits.ounce[i],
+            desc: arr[arr.length - 1].trim(),
+            type: utype.OZ, 
+            apirequest: "https://neutrinoapi.net/convert?to-type=Liter&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Pint&from-value="  
+          }
+          console.log(lineDesc);
       }
       return lineDesc;
     }
@@ -427,13 +415,15 @@ function scanOunce(ingData)
   }
 }
 
+
+
 var ingredientButtonHandler = function(event) {
    
   var lineDesc = {
     num: STRING_EMPTY,
     unit: STRING_EMPTY,
     desc: STRING_EMPTY,
-    found: false,
+    type: STRING_EMPTY,
     apirequest: STRING_EMPTY
   }
   var targetEl = event.target;
@@ -455,83 +445,112 @@ var ingredientButtonHandler = function(event) {
     {
       getUnitEntityConvertedPerAPI(unitEntityHit);
     }
-    
-     
-    var ingredientNode = $("<div>")  
-    // ingredientNode.attr("ing_list_data_id", "ing_list_data_" + j);
-    ingredientNode.addClass("ingredient_list");
-    
-    var ingredient = $("<button>")
-    // ingredient.addClass("quantity_line");
-    // ingredient.attr("ing_item_id", "ing_item_" + i);
-    // ingredient.val(food_data.hits[j].recipe.ingredientLines[i]); 
-    // ingredient.html(PLUS_SIGN + HTML_DSPACE + food_data.hits[j].recipe.ingredientLines[i]); 
-    // ingredient.attr("title", "Click to convert this unit measurement to metric - if applicable");
-    ingredientNode.append(ingredient);
+    else{
+      console.log("Null encountered");
+    }
    
-    //createLinesOfQuantitySpecification(food_data.hits[j].recipe.ingredientLines.length)
-    // ingredient_desc.attr("ing_list_data_id", "ing_list_data_" + j);
-    // ingredient_desc.addClass("ingredient_list");
-    // ingredient_desc.html(INGREDIENT_DESC);
-    // ingredient_desc.append(ingredientNode);
-     
+   
   } 
 }
 
-var getUnitEntityConvertedPerAPI = function(unitEntityHit){
+var getUnitEntityConvertedPerAPI = function(lineDesc){
   alert("ready to be converted");
-  var apiUnitUrl = unitEntityHit.apirequest + unitEntityHit.num;
-  // user = { 
-  //     "name": "Geeks for Geeks", 
-  //     "age": "23" 
-  // }
-  var headers = {};
-  console.log(apiUnitUrl);
-  // Options to be given as parameter 
-  // in fetch for making requests
-  // other then GET
-  let options = {
-      // method: 'GET',
-      mode: 'no-cors',
-      // headers: {
-      //     'Access-Control-Allow-Origin':'*'
-      //     // 'Content-Type': 'application/json;charset=utf-8'
-      // }
-      header: headers
-    }
+  var apiUnitUrl = lineDesc.apirequest + lineDesc.num;
+  
+   
+    // // fetch(apiUnitUrl
+    // //   
+    // //  ).then(function(unit_response) 
+    // //  {
+    // //   if(unit_response.ok)
+    // //   {
+    // //       unit_response.json().then(function(unit_data)
+    // //       {
+    // //       console.log(unit_data);
+    // //       // -- action
+    // //       displayConvertedEntity(unit_data, lineDesc);
+    // //       
+    // //   });
+    // //   }
+    // //   else
+    // //   {
+    // //       console.log("Error: Recipe Data Not Found"); // status 400
+    // //   }
+    // //       
+    // // })  
+    // // .catch(function(error){
+    // //     console.log("An error has occured: " + error);
+    // // }); // it ends here
 
-    // let fetchRes = fetch(apiUnitUrl, options);
-    //           fetchRes.then(res =>
-    //               res.json()).then(d => {
-    //                   console.log(d)
-    //               })
-    
-    fetch(apiUnitUrl
-      
-     ).then(function(unit_response) 
-     {
-      if(unit_response.ok)
-      {
-          unit_response.json().then(function(unit_data)
-          {
-          console.log(unit_data);
-          // -- action
-          // result = displayConvertedEntity(unit_data);
-          if(result = null){
-            console.log("No recipe hit found or an error has occurred");
-          }
-          
-      });
-      }
-      else
-      {
-          console.log("Error: Recipe Data Not Found"); // status 400
-      }
-          
-    })  
-    .catch(function(error){
-        console.log("An error has occured: " + error);
-    }); // it ends here
+    displayConvertedEntity("", lineDesc);
+
+}
+
+// Display ingredient line before and after being convert on pick/click
+function displayConvertedEntity(unit_data, lineDesc){
+  displayResult = true;
+  alert("type is: " + lineDesc.type);
+  var lineDescTextAfter = STRING_EMPTY;
+  var afterQuestionMark = lineDesc.apirequest.split("=");
+  var toUnitQueryString = afterQuestionMark[1].split("&");
+  var toUnit = toUnitQueryString[0];
+  alert("to unit: " + toUnit)
+
+  // -- clear old content
+  if ($("#target_converting_line").has("button")){
+  $("#target_converting_line").empty();
+  }
+
+  var ingredient_desc_english = $("<div>");
+  ingredient_desc_english.html(INGREDIENT_DESC + IMPERIAL);
+  var ingredient_desc_metric = $("<div>");
+  ingredient_desc_metric.html(INGREDIENT_DESC + METRIC);
+  console.log(lineDesc.type)
+  switch(lineDesc.type){
+    case 1:
+      // // lineDescTextAfter = lineDesc.preceedingNum + unit_data.result + SPACE + HYPHEN + SPACE + toUnit + lineDesc.desc;
+      lineDescTextAfter = lineDesc.preceedingNum + "0.18" + SPACE + toUnit + SPACE + lineDesc.desc;
+      alert("case 1");
+      break;
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+      alert ("case 2 to 5")
+      // // lineDescTextAfter = unit_data.result + toUnit + lineDesc.desc;
+      lineDescTextAfter = "0.47" + SPACE + toUnit + SPACE + lineDesc.desc;
+      break;
+    default:
+      toUnit = "mixed";
+  }
+  // // lineDescTextAfter = lineDesc.preceedingNum + unit_data.result-float + SPACE + unit_data.to-type + lineDesc.desc;
+  // lineDescTextAfter = lineDesc.preceedingNum + "0.18" + SPACE + toUnit + lineDesc.desc;
+
+  var ingredientNodeBefore = $("<div>")  
+  ingredientNodeBefore.addClass("ingredient_list");
+
+  var ingredient = $("<button>")
+  ingredient.addClass("quantity_line");
+  ingredient.val(lineDesc.original); 
+  ingredient.html(PLUS_SIGN + HTML_DSPACE + lineDesc.original); 
+  // ingredient.prop("disabled", true);
+  ingredientNodeBefore.append(ingredient);  
+  ingredient_desc_english.append(ingredientNodeBefore);
+
+  var ingredientNodeAfter = $("<div>")  
+  ingredientNodeAfter.addClass("ingredient_list");
+
+  var ingredientAfter = $("<button>")
+  ingredientAfter.addClass("quantity_line");
+  ingredientAfter.val(lineDescTextAfter); 
+  ingredientAfter.html(PLUS_SIGN + HTML_DSPACE + lineDescTextAfter); 
+  ingredientNodeAfter.append(ingredientAfter);
+  
+  ingredient_desc_metric.html(INGREDIENT_DESC + "- Metric");
+  ingredient_desc_metric.append(ingredientNodeAfter);  
+  $("#target_converting_line").append(ingredient_desc_english);
+  $("#target_converting_line").append(ingredient_desc_metric);
+
 
 }
 

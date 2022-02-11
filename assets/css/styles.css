@@ -50,20 +50,14 @@
 
 .recipe-box .quantity_line{
     border: none;
-    background-color: transparent;
-    /* color: rgb(87, 121, 134); */
-
-    width: 98%;
-    /* display: flex; */
-    /* flex-direction: row; */
+    background-color: transparent;    
+    width: 98%;    
     font-family: inherit;
     font-size: 16px;
-
     line-height: 18px;
     margin: 0 0 7px 2px;
     padding: 6px 0 ;
-    text-align: left;
-    /* cursor: crosshair; */
+    text-align: left;  
     min-width: 200px;
 }
 
@@ -74,28 +68,59 @@
 .recipe-box .quantity_line:hover{
     border: none;
     background-color: #f2f2f2;
-    border-radius: 5px;
-    /* color: rgb(87, 121, 134); */
-
-    /* color: rgb(87, 121, 134); */
-
-    width: 98%;
-    /* display: flex; */
-    /* flex-direction: row; */
+    border-radius: 5px;     
+    width: 98%;   
     font-family: inherit;
     font-size: 16px;
-
     line-height: 18px;
     margin: 0 0 7px 2px;
     padding: 6px 0 ;
-    text-align: left;
-    /* cursor: crosshair; */
+    text-align: left;     
     min-width: 200px;
 }
  
 .unit-box {
     justify-content: flex-end;
 }
+
+.unit-box .quantity_line{    
+    border: 0 solid;
+    background-color: #f2f2f2;
+    width: 98%;    
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 18px;
+    margin: 0 0 17px 2px;
+    padding: 8px 0 ;
+    text-align: left;  
+    min-width: 200px;     
+}
+
+.unit-box .quantity_line:hover{
+    border-radius: 5px;  
+    border: none !important;
+    background-color: transparent; 
+    width: 98%;   
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 18px;
+    margin: 0 0 17px 2px;
+    padding: 8px 0 ;
+    text-align: left;     
+    min-width: 200px;
+}
+
+/* .unit-box ul, li{
+    background-color: #f2f2f2;
+    width: 98%;
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 18px;
+    margin: 0 0 7px 2px;
+    padding: 6px 0 ;
+    text-align: left;
+    list-style: none;
+} */
 
 label {
     font-size: 1rem;
