@@ -47,6 +47,51 @@
     margin: 0 5px;
     padding: 0 10px;
  }
+
+.recipe-box .quantity_line{
+    border: none;
+    background-color: transparent;
+    /* color: rgb(87, 121, 134); */
+
+    width: 98%;
+    /* display: flex; */
+    /* flex-direction: row; */
+    font-family: inherit;
+    font-size: 16px;
+
+    line-height: 18px;
+    margin: 0 0 7px 2px;
+    padding: 6px 0 ;
+    text-align: left;
+    /* cursor: crosshair; */
+    min-width: 200px;
+}
+
+.ingredient_list{
+    padding: 0 0 7px 0;
+}
+  
+.recipe-box .quantity_line:hover{
+    border: none;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    /* color: rgb(87, 121, 134); */
+
+    /* color: rgb(87, 121, 134); */
+
+    width: 98%;
+    /* display: flex; */
+    /* flex-direction: row; */
+    font-family: inherit;
+    font-size: 16px;
+
+    line-height: 18px;
+    margin: 0 0 7px 2px;
+    padding: 6px 0 ;
+    text-align: left;
+    /* cursor: crosshair; */
+    min-width: 200px;
+}
  
 .unit-box {
     justify-content: flex-end;
