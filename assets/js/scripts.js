@@ -13,6 +13,8 @@ const APP_ID = '90242961' ;
 const API_KEY = '9460d3016254646a35748a9dcc6faa0a';
 const CVTR_APP_ID = 'UnitMercuryKT' ;
 const CVTR_API_KEY = '54WxdnbwWSE2TmuOexQ8bMyNbl1gBBc1wl3AhuRlVt9W9mlw';
+const ENG2METRIC_CVRT_INST = 'Click to convert unit measurement on this line to Metric - if applicable';
+const METRIC2ENG_CVRT_INST = 'Click to convert unit measurement on this line to Imperial - if applicable';
 var DEFAULT_CUISINE = 'American';
 
 let searchRecord = [];
@@ -21,7 +23,7 @@ let searchClick = 0;
 const SERVER_NUMBER = "<strong>Yield: </strong>";
 const CUISINE_TYPE = "<strong>Cuisine type: </strong>";
 const INGREDIENT_DESC = "<strong>Ingredients: </strong>";
-const NUTRIENT_INFO = "<strong>Nutrient Infomation: </strong>";
+const NUTRIENT_INFO = "<strong>Nutrients: </strong>";
 const DIRECTION_INFO = "Directions";
 const SOURCE_INFO = "Source:"
 const METRIC = " - Metric";
@@ -36,7 +38,7 @@ const commonRecipeUnits = {
   inch: ["inches", "inch"]
 }
 
-const utype = {
+const commonKitchenUnits = {
   OZ: 1,
   CUP: 2,
   TABLESPOON: 3,
@@ -49,7 +51,6 @@ var recipeInputEl = document.querySelector("#search-form");
 
 //----------------------------------------RECIPE-KT-------------------------------------------/
 function renderLandingPage(){
-  hideBtnAlias();
   hideRecipeBox();
   hideUnitBox();
   hideMessageBox();
@@ -57,21 +58,13 @@ function renderLandingPage(){
   // renderItemSearchHistory()
 }
 
-function hideBtnAlias(){
-  $("#btnAlias").hide();
-}
-
-function showBtnAlias(){
-  $("#btnAlias").show();
-}
-
-function removeModalTrigger(){
- 
-  if($("#btn").hasClass("modal-trigger") > 6){
-    alert("more than 6 classes")
-    $("#btn").removeClass('modal-trigger');
-  }
-}
+// function removeModalTrigger(){
+//  
+//   if($("#btn").hasClass("modal-trigger") > 6){
+//     alert("more than 6 classes")
+//     $("#btn").removeClass('modal-trigger');
+//   }
+// }
 //--------------------------//
 function hideUnitBox(){
   $("#unit_box").hide();
@@ -80,7 +73,7 @@ function hideUnitBox(){
 function showUnitBox(){
   $("#unit_box").height(900);
   $("#unit_box").show(900);
-  // removeModalTrigger();
+  
 }
 
 
@@ -129,11 +122,16 @@ function showNoRecordResult()
 }
 
 function createEntityClickEventHandler(){
-  var ingredientNode = document.querySelector("div[class='ingredient_list']");
-  if(ingredientNode != null)
-  {
-    ingredientNode.addEventListener("click", ingredientButtonHandler);
-  }
+  // var ingredientNode = document.querySelector("div[class='ingredient_list']");
+  // if(ingredientNode != null)
+  // {
+  //   ingredientNode.addEventListener("click", ingredientButtonHandler);
+  // }
+  // var nutrientNode = document.querySelector("div[class='nutrient_list']");
+  // if(nutrientNode != null)
+  // {
+  //   nutrientNode.addEventListener("click", ingredientButtonHandler);
+  // }
 }
 
 function createLinesOfQuantitySpecification(lineNumber){
@@ -155,6 +153,12 @@ function displayRecipeHits(food_data){
   if ($("#target_recipe").has("img")){
     $("#target_recipe").empty();
     }
+
+    $("#target_converting_line").empty();
+    var h3El = $("<h3>").addClass("content-title center-align")
+             .text("Unit Conversion");
+             $("#target_converting_line").append(h3El);
+   
   if(food_data != null)
   {
     if(food_data.count != 0){
@@ -162,13 +166,15 @@ function displayRecipeHits(food_data){
       if(food_data.hits.length >=5 ){
         // -- display up to 5 recipes
         displayResult = displayRecipeGroup(food_data, 5);
-        createEntityClickEventHandler(); 
+        // createEntityClickEventHandler(); 
+        if($("#recipe_box").is(":visible")){hideRecipeBox(1000);}
         showRecipeBox(displayResult);
       }
       else
       {
         displayResult = displayRecipeGroup(food_data, parseInt(food_data.hits.length));
-        createEntityClickEventHandler(); 
+        // createEntityClickEventHandler(); 
+        if($("#recipe_box").is(":visible")){hideRecipeBox(1000);}
         showRecipeBox(displayResult);
       }
     }
@@ -211,15 +217,23 @@ function displayRecipeGroup(food_data, recipeResultSize)
         ingredient.attr("ing_item_id", "ing_item_" + i);
         ingredient.val(food_data.hits[j].recipe.ingredientLines[i]); 
         ingredient.html(PLUS_SIGN + HTML_DSPACE + food_data.hits[j].recipe.ingredientLines[i]); 
-        ingredient.attr("title", "Click to convert this unit measurement to metric - if applicable");
+        ingredient.attr("title", ENG2METRIC_CVRT_INST);
         ingredientNode.append(ingredient);
       }
-    
-      //createLinesOfQuantitySpecification(food_data.hits[j].recipe.ingredientLines.length)
-      // ingredient_desc.attr("ing_list_data_id", "ing_list_data_" + j);
-      // ingredient_desc.addClass("ingredient_list");
+     
       ingredient_desc.html(INGREDIENT_DESC);
       ingredient_desc.append(ingredientNode);
+
+      $("button[class='quantity_line']").on( "click", function() {
+        $(this).css("background-color", "#f2f2f2")
+        var ingData = $(this).val()
+        alert(ingData);
+      });
+
+      $("button[class='quantity_line']").mouseover( "click", function() {
+        $(this).attr("title", ENG2METRIC_CVRT_INST);
+         
+      });
 
       var recipe_direction = $("<div>");
       var howtoRedirect = $("<a>")
@@ -239,77 +253,144 @@ function displayRecipeGroup(food_data, recipeResultSize)
       recipeSpanImage.attr("src", food_data.hits[j].recipe.images.SMALL.url)
       recipeSpanImage.attr("title",  recipeNameForHeader)
       recipeSpanImage.attr("alt", recipeNameForHeader);
-      
+     
       var h3El = $("<h3>")
       h3El.addClass("center-align")
           .append(recipeSpanImage);
 
-      var calorie = $("<li>");
-      calorie.html(HTML_BULLET + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.ENERC_KCAL.label +"</strong>" + COLON
+      var calorie = $("<button>");
+      calorie.addClass("quanity_line_nutrient");
+      calorie.attr("title", METRIC2ENG_CVRT_INST);
+      calorie.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.ENERC_KCAL.label +"</strong>" + COLON
         + SPACE + (food_data.hits[j].recipe.totalNutrients.ENERC_KCAL.quantity).toFixed(2)   
         + SPACE + food_data.hits[j].recipe.totalNutrients.ENERC_KCAL.unit);
+        calorie.val(food_data.hits[j].recipe.totalNutrients.ENERC_KCAL.label + COLON
+        + SPACE + (food_data.hits[j].recipe.totalNutrients.ENERC_KCAL.quantity).toFixed(2)   
+        + SPACE + food_data.hits[j].recipe.totalNutrients.ENERC_KCAL.unit);        
 
-      var fat = $("<li>");
-      fat.html(HTML_BULLET + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.FAT.label +"</strong>" + COLON
+      var fat = $("<button>");
+      fat.addClass("quanity_line_nutrient");
+      fat.attr("title", METRIC2ENG_CVRT_INST);
+      fat.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.FAT.label +"</strong>" + COLON
         + SPACE +  (food_data.hits[j].recipe.totalNutrients.FAT.quantity).toFixed(2) 
+        + SPACE + food_data.hits[j].recipe.totalNutrients.FAT.unit); 
+      fat.val(food_data.hits[j].recipe.totalNutrients.FAT.label + COLON
+        + SPACE + (food_data.hits[j].recipe.totalNutrients.FAT.quantity).toFixed(2) 
         + SPACE + food_data.hits[j].recipe.totalNutrients.FAT.unit);      
         
-      var carb = $("<li>");
-      carb.html(HTML_BULLET + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.CHOCDF.label +"</strong>" + COLON
+      var carb = $("<button>");
+      carb.attr("title", METRIC2ENG_CVRT_INST);
+      carb.addClass("quanity_line_nutrient");
+      carb.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.CHOCDF.label +"</strong>" + COLON
         + SPACE + (food_data.hits[j].recipe.totalNutrients.CHOCDF.quantity).toFixed(2)
-        + SPACE + food_data.hits[j].recipe.totalNutrients.CHOCDF.unit);  
+        + SPACE + food_data.hits[j].recipe.totalNutrients.CHOCDF.unit); 
+      carb.val(food_data.hits[j].recipe.totalNutrients.CHOCDF.label + COLON
+        + SPACE + (food_data.hits[j].recipe.totalNutrients.CHOCDF.quantity).toFixed(2)
+        + SPACE + food_data.hits[j].recipe.totalNutrients.CHOCDF.unit);   
         
-      var sugar = $("<li>");
-      sugar.html(HTML_BULLET + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.SUGAR.label +"</strong>" + COLON
+      var sugar = $("<button>");
+      sugar.addClass("quanity_line_nutrient");
+      sugar.attr("title", METRIC2ENG_CVRT_INST);
+      sugar.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.SUGAR.label +"</strong>" + COLON
+      + SPACE + (food_data.hits[j].recipe.totalNutrients.SUGAR.quantity).toFixed(2)
+      + SPACE + food_data.hits[j].recipe.totalNutrients.SUGAR.unit);  
+      sugar.val(food_data.hits[j].recipe.totalNutrients.SUGAR.label + COLON
       + SPACE + (food_data.hits[j].recipe.totalNutrients.SUGAR.quantity).toFixed(2)
       + SPACE + food_data.hits[j].recipe.totalNutrients.SUGAR.unit);  
 
-      var cholesterol = $("<li>");
-      cholesterol.html(HTML_BULLET + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.CHOLE.label +"</strong>" + COLON
+
+      var cholesterol = $("<button>");
+      cholesterol.addClass("quanity_line_nutrient");
+      cholesterol.attr("title", METRIC2ENG_CVRT_INST);
+      cholesterol.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.CHOLE.label +"</strong>" + COLON
+      + SPACE + (food_data.hits[j].recipe.totalNutrients.CHOLE.quantity).toFixed(2)
+      + SPACE + food_data.hits[j].recipe.totalNutrients.CHOLE.unit);  
+      cholesterol.val(food_data.hits[j].recipe.totalNutrients.CHOLE.label + COLON
       + SPACE + (food_data.hits[j].recipe.totalNutrients.CHOLE.quantity).toFixed(2)
       + SPACE + food_data.hits[j].recipe.totalNutrients.CHOLE.unit);  
 
-      var potassium = $("<li>");
-      potassium.html(HTML_BULLET + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.K.label +"</strong>" + COLON
+      var potassium = $("<button>");
+      potassium.addClass("quanity_line_nutrient");
+      potassium.attr("title", METRIC2ENG_CVRT_INST);
+      potassium.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.K.label +"</strong>" + COLON
+      + SPACE + (food_data.hits[j].recipe.totalNutrients.K.quantity).toFixed(2)
+      + SPACE + food_data.hits[j].recipe.totalNutrients.K.unit);  
+      potassium.val(food_data.hits[j].recipe.totalNutrients.K.label + COLON
       + SPACE + (food_data.hits[j].recipe.totalNutrients.K.quantity).toFixed(2)
       + SPACE + food_data.hits[j].recipe.totalNutrients.K.unit);  
 
-      var zinc = $("<li>");
-      zinc.html(HTML_BULLET + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.ZN.label +"</strong>" + COLON
+      var zinc = $("<button>");
+      zinc.addClass("quanity_line_nutrient");
+      zinc.attr("title", METRIC2ENG_CVRT_INST);
+      zinc.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.ZN.label +"</strong>" + COLON
       + SPACE + (food_data.hits[j].recipe.totalNutrients.ZN.quantity).toFixed(2)
-      + SPACE + food_data.hits[j].recipe.totalNutrients.ZN.unit);  
+      + SPACE + food_data.hits[j].recipe.totalNutrients.ZN.unit); 
+      zinc.val(food_data.hits[j].recipe.totalNutrients.ZN.label + COLON
+      + SPACE + (food_data.hits[j].recipe.totalNutrients.ZN.quantity).toFixed(2)
+      + SPACE + food_data.hits[j].recipe.totalNutrients.ZN.unit);   
 
-      var vitaminA = $("<li>");
-      vitaminA.html(HTML_BULLET + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.VITA_RAE.label +"</strong>" + COLON
+      var vitaminA = $("<button>");
+      vitaminA.addClass("quanity_line_nutrient");
+      vitaminA.attr("title", METRIC2ENG_CVRT_INST);
+      vitaminA.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.VITA_RAE.label +"</strong>" + COLON
+      + SPACE + (food_data.hits[j].recipe.totalNutrients.VITA_RAE.quantity).toFixed(2)
+      + SPACE + food_data.hits[j].recipe.totalNutrients.VITA_RAE.unit);  
+      vitaminA.val(food_data.hits[j].recipe.totalNutrients.VITA_RAE.label + COLON
       + SPACE + (food_data.hits[j].recipe.totalNutrients.VITA_RAE.quantity).toFixed(2)
       + SPACE + food_data.hits[j].recipe.totalNutrients.VITA_RAE.unit);  
 
-      var vitaminC = $("<li>");
-      vitaminC.html(HTML_BULLET + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.VITC.label +"</strong>" + COLON
+      var vitaminC = $("<button>");
+      vitaminC.addClass("quanity_line_nutrient");
+      vitaminC.attr("title", METRIC2ENG_CVRT_INST);
+      vitaminC.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.VITC.label +"</strong>" + COLON
+      + SPACE + (food_data.hits[j].recipe.totalNutrients.VITC.quantity).toFixed(2)
+      + SPACE + food_data.hits[j].recipe.totalNutrients.VITC.unit);  
+      vitaminC.val(food_data.hits[j].recipe.totalNutrients.VITC.label + COLON
       + SPACE + (food_data.hits[j].recipe.totalNutrients.VITC.quantity).toFixed(2)
       + SPACE + food_data.hits[j].recipe.totalNutrients.VITC.unit);  
 
-      var vitamineD = $("<li>");
-      vitamineD.html(HTML_BULLET + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.VITD.label +"</strong>" + COLON
+      var vitamineD = $("<button>");
+      vitamineD.addClass("quanity_line_nutrient");
+      vitamineD.attr("title", METRIC2ENG_CVRT_INST);
+      vitamineD.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.VITD.label +"</strong>" + COLON
+      + SPACE + (food_data.hits[j].recipe.totalNutrients.VITD.quantity).toFixed(2)
+      + SPACE + food_data.hits[j].recipe.totalNutrients.VITD.unit);  
+      vitamineD.val(food_data.hits[j].recipe.totalNutrients.VITD.label + COLON
       + SPACE + (food_data.hits[j].recipe.totalNutrients.VITD.quantity).toFixed(2)
       + SPACE + food_data.hits[j].recipe.totalNutrients.VITD.unit);  
 
-      var vitamineE = $("<li>");
-      vitamineE.html(HTML_BULLET + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.TOCPHA.label +"</strong>" + COLON
+      var vitamineE = $("<button>");
+      vitamineE.addClass("quanity_line_nutrient");
+      vitamineE.attr("title", METRIC2ENG_CVRT_INST);
+      vitamineE.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.TOCPHA.label +"</strong>" + COLON
+      + SPACE + (food_data.hits[j].recipe.totalNutrients.TOCPHA.quantity).toFixed(2)
+      + SPACE + food_data.hits[j].recipe.totalNutrients.TOCPHA.unit);  
+      vitamineE.val(food_data.hits[j].recipe.totalNutrients.TOCPHA.label + COLON
       + SPACE + (food_data.hits[j].recipe.totalNutrients.TOCPHA.quantity).toFixed(2)
       + SPACE + food_data.hits[j].recipe.totalNutrients.TOCPHA.unit);  
 
-      var fiber = $("<li>");
-      fiber.html(HTML_BULLET + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.FIBTG.label +"</strong>" + COLON
+      var fiber = $("<button>");
+      fiber.addClass("quanity_line_nutrient");
+      fiber.attr("title", METRIC2ENG_CVRT_INST);
+      fiber.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.FIBTG.label +"</strong>" + COLON
       + SPACE + (food_data.hits[j].recipe.totalNutrients.FIBTG.quantity).toFixed(2)
       + SPACE + food_data.hits[j].recipe.totalNutrients.FIBTG.unit); 
-      
-      var protein = $("<li>");
-      protein.html(HTML_BULLET + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.PROCNT.label +"</strong>" + COLON
+      fiber.val(food_data.hits[j].recipe.totalNutrients.FIBTG.label + COLON
+      + SPACE + (food_data.hits[j].recipe.totalNutrients.FIBTG.quantity).toFixed(2)
+      + SPACE + food_data.hits[j].recipe.totalNutrients.FIBTG.unit); 
+
+      var protein = $("<button>");
+      protein.addClass("quanity_line_nutrient");
+      protein.attr("title", METRIC2ENG_CVRT_INST);
+      protein.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + food_data.hits[j].recipe.totalNutrients.PROCNT.label +"</strong>" + COLON
+      + SPACE + (food_data.hits[j].recipe.totalNutrients.PROCNT.quantity).toFixed(2)
+      + SPACE + food_data.hits[j].recipe.totalNutrients.PROCNT.unit); 
+      protein.val(food_data.hits[j].recipe.totalNutrients.PROCNT.label + COLON
       + SPACE + (food_data.hits[j].recipe.totalNutrients.PROCNT.quantity).toFixed(2)
       + SPACE + food_data.hits[j].recipe.totalNutrients.PROCNT.unit); 
 
-      var nutrientNode = $("<ul>");
+      var nutrientNode = $("<div>");
+      nutrientNode.addClass("nutrient_list"); 
       nutrientNode.append(calorie)
                   .append(fat)
                   .append(carb)
@@ -331,11 +412,86 @@ function displayRecipeGroup(food_data, recipeResultSize)
                         .append(serve_number)
                         .append(cuisine_type)
                         .append(ingredient_desc)
-                        // .append(ingredient_desc)
                         .append(recipe_direction)
                         .append(nutrient_info);
     } // end for loop
+
+    $("button[class='quanity_line_nutrient']").on("click", function() {
+      $(this).css("background-color", "#f2f2f2")
+      var nutriData = $(this).val()
+      getScannedForMetricConvertable(nutriData);     
+
+    });    
+
+    $("button[class='quanity_line_nutrient']").mouseover("click", function() {
+      $(this).attr("title", METRIC2ENG_CVRT_INST);      
+    });
+       
     return success;
+}
+
+function getScannedForMetricConvertable(nutriData){
+  let portionLabel = nutriData.split(COLON)[0].trim();
+  let portionNoneLabel = nutriData.split(COLON)[1].trim();
+  quantity = portionNoneLabel.split(SPACE);
+  // alert(portionNoneLabel)
+  // alert("I think this is the numeric: " + quantity[0].trim()) 
+  // alert ("this is the unit: " + quantity[1].trim()) 
+  var lineNutrient = {
+    original : nutriData,
+    preceedingNum: portionLabel,
+    num:  quantity[0].trim(),
+    unit: quantity[1].trim(),
+    desc: STRING_EMPTY,
+    apirequest:  "https://neutrinoapi.net/convert?to-type=Ounce&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Gram&from-value="
+  } 
+
+  // // ready to be fetched to get the converted data from server API site but it does not let us do it
+  // // so we might as well display it in a certain form as if the API is running
+  displayConvertedEntityNutrient(lineNutrient);
+   
+};
+
+function displayConvertedEntityNutrient(lineNutrient){
+  var lineDescTextAfter = STRING_EMPTY;
+  var afterQuestionMark = lineNutrient.apirequest.split("=");
+  var toUnitQueryString = afterQuestionMark[1].split("&");
+  var toUnit = toUnitQueryString[0];
+
+  lineDescTextAfter =  ((lineNutrient.num)/28.34952).toFixed(2) + SPACE + toUnit;
+
+  var nutrient_desc_english = $("<div>");
+  nutrient_desc_english.html(NUTRIENT_INFO + IMPERIAL);
+  var nutrient_desc_metric = $("<div>");
+  nutrient_desc_metric.html(NUTRIENT_INFO + METRIC);
+
+  var nutrientNodeBefore = $("<div>")  
+  // nutrientNodeBefore.addClass("quanity_line_nutrient");
+
+  var nutrient = $("<button>")
+  nutrient.addClass("quantity_line");
+  nutrient.val(lineNutrient.original); 
+  nutrient.html(PLUS_SIGN + HTML_DSPACE + lineNutrient.original); 
+ 
+  nutrientNodeBefore.append(nutrient);  
+  nutrient_desc_metric.append(nutrientNodeBefore);
+
+  var nutrientNodeAfter = $("<div>")  
+  // nutrientNodeAfter.addClass("quanity_line_nutrient");
+
+  var nutrientAfter = $("<button>")
+  nutrientAfter.addClass("quantity_line");
+  nutrientAfter.val(lineNutrient.preceedingNum + lineDescTextAfter); 
+  nutrientAfter.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + lineNutrient.preceedingNum + "</strong>" + SPACE + lineDescTextAfter); 
+  nutrientNodeAfter.append(nutrientAfter);
+  
+  nutrient_desc_english.html(INGREDIENT_DESC + "- Imperial");
+  nutrient_desc_english.append(nutrientNodeAfter); 
+  
+
+  $("#target_converting_line").append(nutrient_desc_metric); 
+  $("#target_converting_line").append(nutrient_desc_english);
+  
 }
 
 //-------------------------------------Scan unit in desc for dynamic conversion ----------------------
@@ -347,7 +503,7 @@ function scanCup(ingData){
     num: STRING_EMPTY,
     unit: STRING_EMPTY,
     desc: STRING_EMPTY,
-    type: utype.CUP,
+    type: commonKitchenUnits.CUP,
     apirequest: STRING_EMPTY
   }
    
@@ -367,7 +523,7 @@ function scanCup(ingData){
         num: parseInt(arr[0].trim())*2,
         unit: commonRecipeUnits.cup[i],
         desc: arr[arr.length - 1].trim(),
-        type: utype.CUP,
+        type: commonKitchenUnits.CUP,
         apirequest: "https://neutrinoapi.net/convert?to-type=Liter&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Ounce&from-value="  
       }
       console.log(lineDesc);
@@ -391,7 +547,7 @@ function scanTablespoon(ingData)
     num: STRING_EMPTY,
     unit: STRING_EMPTY,
     desc: STRING_EMPTY,
-    type: utype.TABLESPOON,
+    type: commonKitchenUnits.TABLESPOON,
     apirequest: STRING_EMPTY
   }
   for( var i = 0; i < commonRecipeUnits.bigspoon.length; i++ )
@@ -421,7 +577,7 @@ function scanTablespoon(ingData)
               num: (parseInt(vicinitySlashes[0]) / parseInt(vicinitySlashes[1]))/2,
               unit: commonRecipeUnits.ounce[i],
               desc: arr[arr.length - 1].trim(),
-              type: utype.TABLESPOON,
+              type: commonKitchenUnits.TABLESPOON,
               apirequest: "https://neutrinoapi.net/convert?to-type=Liter&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Ounce&from-value="  
             }
             return lineDesc;
@@ -439,7 +595,7 @@ function scanTablespoon(ingData)
               num: parseInt( numericArry[0]) + (parseInt(numericArry[1]) / parseInt(numericArry[2]))/2,
               unit: commonRecipeUnits.ounce[i],
               desc: arr[arr.length - 1].trim(),
-              type: utype.TABLESPOON,
+              type: commonKitchenUnits.TABLESPOON,
               apirequest: "https://neutrinoapi.net/convert?to-type=Liter&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Ounce&from-value="  
               }
             }
@@ -455,7 +611,7 @@ function scanTablespoon(ingData)
         num: parseInt(arr[0])/2,
         unit: commonRecipeUnits.ounce[i],
         desc: arr[arr.length - 1].trim(),
-        type: utype.TABLESPOON,
+        type: commonKitchenUnits.TABLESPOON,
         apirequest: "https://neutrinoapi.net/convert?to-type=Liter&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Ounce&from-value="  
         }
         return lineDesc;
@@ -479,7 +635,7 @@ function scanOunce(ingData)
     num: STRING_EMPTY,
     unit: STRING_EMPTY,
     desc: STRING_EMPTY,
-    type: utype.OZ,
+    type: commonKitchenUnits.OZ,
     apirequest: STRING_EMPTY
   }
   for( var i = 0; i < commonRecipeUnits.ounce.length; i++ )
@@ -512,7 +668,7 @@ function scanOunce(ingData)
             num: parseInt(vicinityHyphen[0]) / 16,
             unit: commonRecipeUnits.ounce[i],
             desc: arr[arr.length - 1].trim(),
-            type: utype.OZ, 
+            type: commonKitchenUnits.OZ, 
             apirequest: "https://neutrinoapi.net/convert?to-type=Liter&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Pint&from-value="  
           }
           console.log(lineDesc);
@@ -529,7 +685,7 @@ function scanOunce(ingData)
             num: parseInt( arr[0].trim())/16,
             unit: commonRecipeUnits.ounce[i],
             desc: arr[arr.length - 1].trim(),
-            type: utype.OZ, 
+            type: commonKitchenUnits.OZ, 
             apirequest: "https://neutrinoapi.net/convert?to-type=Liter&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Pint&from-value="  
           }
           console.log(lineDesc);
@@ -637,7 +793,7 @@ function displayConvertedEntity(unit_data, lineDesc){
   var afterQuestionMark = lineDesc.apirequest.split("=");
   var toUnitQueryString = afterQuestionMark[1].split("&");
   var toUnit = toUnitQueryString[0];
-  alert("to unit: " + toUnit)
+  // alert("to unit: " + toUnit)
 
   // -- clear old content
   if ($("#target_converting_line").has("button")){
@@ -671,6 +827,7 @@ function displayConvertedEntity(unit_data, lineDesc){
 
   var ingredientNodeBefore = $("<div>")  
   ingredientNodeBefore.addClass("ingredient_list");
+
 
   var ingredient = $("<button>")
   ingredient.addClass("quantity_line");
@@ -711,7 +868,7 @@ var getRecipeEntity = function(recipephrase, searchOptions)
   // // // local storage implementation
   // // searchRecord.push(searchByClicking);
   // //  localStorage.setItem(searchByClicking.searchTerm + UNDERSCORE + searchByClicking.searchID, JSON.stringify(searchByClicking));
-
+  
   var apiFoodUrl = STRING_EMPTY;
   // -- cuisine-type defaults to American
   apiFoodUrl = 'https://api.edamam.com/api/recipes/v2?app_id=' + APP_ID + '&app_key=' + API_KEY 
@@ -787,7 +944,7 @@ var getRecipeEntity = function(recipephrase, searchOptions)
   .catch(function(error){
       console.log("An error has occured: " + error);
   }); // it ends here
-
+  
 }
 
 var formSubmitHandler = function(event){
@@ -799,11 +956,11 @@ var formSubmitHandler = function(event){
     cuisineType : $("#cuisine_type :selected").text()
   }
 
-
   if (recipephrase) {
-    $("#btn").removeClass('modal-trigger'); 
+    $("#btn").removeClass('modal-trigger');        
+   
     getRecipeEntity(recipephrase, searchOptions);
-  
+    
   } 
   else {
     // Prompt for required input
@@ -867,6 +1024,7 @@ var quickFetchUnit = function()
 
 
 renderLandingPage()
- 
+
+
 
 

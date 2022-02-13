@@ -84,8 +84,8 @@
                     <a href="#!" onclick="removeTrigger()" class="modal-close waves-effect waves-blue btn-flat">OK</a>
                   </div>
                 </div>
-              <input class="search-field" 
-              type="text" 
+              <input class="search-field"  
+              type="text" autocomplete="off"
               placeholder="Example: Smothered Pork" 
               id="search-form">
               
@@ -113,20 +113,12 @@
             <div class="recipe-content"></div>
           </div>
           <!-- End of Recipe Rendering Box -->
-          <div class="col s6 unit-box" id="unit_box">
-            <div>
-              <h2 class="content-title center-align">Unit Conversion</h2>
-            </div>
-            <!-- <div class="unit-content" id="target_converter">
-              <p></p>
-            </div> -->
-            <div class="unit-content scrollable" id="target_converting_line">
-              
+          <div class="col s6 unit-box " id="unit_box">
+            <div class="unit-content  scrollable" id="target_converting_line">
+              <h3 class="content-title center-align">Unit Conversion</h3>
             </div>
           </div>
-          <!-- Modal Trigger -->
-         
-          
+           
         </div>
       </section>
     </main>
@@ -140,7 +132,16 @@
      function removeTrigger(){
         var btnEl = document.getElementById("btn");
         if(btnEl.classList.contains("modal-trigger")){
-        btnEl.classList.remove("modal-trigger");}
+        btnEl.classList.remove("modal-trigger");
+        var btnInputEl = document.getElementById("search-field")
+        btnEl.focus()}
+     }
+     function addTrigger(){
+        var btnEl = document.getElementById("btn");
+        var recipephrase = recipeInputEl.value.trim();
+        if(!recipephrase){
+        btnEl.classList.add("modal-trigger");
+        btnEl.click();}
      }
    
   </script>
