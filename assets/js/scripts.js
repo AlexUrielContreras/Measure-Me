@@ -6,6 +6,7 @@ const SLASH = '/'
 const OPEN_PAREN = '(';
 const HYPHEN = '-';
 const PLUS_SIGN = "+ ";
+const TIMESTAMP = '@ ' ;
 const HTML_NEXTLINE = "</br>"; 
 const HTML_BULLET = "&bull; ";
 const HTML_DSPACE = "&nbsp;&nbsp;"; 
@@ -19,9 +20,11 @@ var DEFAULT_CUISINE = 'American';
 
 let searchRecord = [];
 let searchClick = 0;
-
+const PRETEXT_HISTORY = "Searched on: "
 const SERVER_NUMBER = "<strong>Yield: </strong>";
 const CUISINE_TYPE = "<strong>Cuisine type: </strong>";
+const MEAL_TYPE = "<strong>Meal type: </strong>";
+const DISH_TYPE = "<strong>Dish type: </strong>";
 const INGREDIENT_DESC = "<strong>Ingredients: </strong>";
 const NUTRIENT_INFO = "<strong>Nutrients Information: </strong>";
 const DIRECTION_INFO = "Directions";
@@ -55,7 +58,15 @@ function renderLandingPage(){
   hideUnitBox();
   hideMessageBox();
   $("#search-form").focus()
-  // renderItemSearchHistory()
+  renderItemSearchHistory()
+}
+
+function hideHistoryController(){
+  $("#history_controller").hide();  
+}
+
+function showHistoryController(){
+  $("#history_controller").show();  
 }
 
 function hideUnitBox(){
@@ -125,7 +136,7 @@ function createLinesOfQuantitySpecification(lineNumber){
 }
 
 // Create elements and populate them with data returned from an recipe api fetch
-function displayRecipeHits(food_data){
+function displayRecipeHits(food_data, searchByClicking){
   console.log(food_data);
   displayResult = true; // set initial condition to detect when it becomes false
   // -- clear old content
@@ -141,6 +152,19 @@ function displayRecipeHits(food_data){
   if(food_data != null)
   {
     if(food_data.count != 0){
+      var numSearch = searchByClicking.searchID.toString().split(UNDERSCORE);
+      if (numSearch % 3 == 0){
+        var itemHistory = $("<p>").addClass("history_alt")
+        .attr("title", PRETEXT_HISTORY + searchByClicking.searchDateTime.format('dddd, MMMM Do YYYY') + SPACE + TIMESTAMP + searchByClicking.searchDateTime.format('LTS'))
+        .text((searchByClicking.searchTerm));
+      }
+      else{
+        var itemHistory = $("<p>").addClass("history")
+        .attr("title", PRETEXT_HISTORY + searchByClicking.searchDateTime.format('dddd, MMMM Do YYYY') + SPACE + TIMESTAMP + searchByClicking.searchDateTime.format('LTS'))
+        .text((searchByClicking.searchTerm));
+      }
+      $("#recently").append(itemHistory);  
+
       // alert("no record in set");
       if(food_data.hits.length >=5 ){
         // -- display up to 5 recipes
@@ -173,23 +197,29 @@ function displayRecipeGroup(food_data, recipeResultSize)
       var recipeNameForHeader = (food_data.hits[j].recipe.label) ? food_data.hits[j].recipe.label : STRING_EMPTY;
       if (!recipeNameForHeader) {success = false; return success;}
       var recipe_search_term = $("<h3>");
+
       var serve_number = $("<p>");
       var cuisine_type = $("<p>");
+      var meal_type = $("<p>");
+      var dish_type = $("<p>");
+
       var ingredient_desc = $("<div>");
       var nutrient_info = $("<div>");
 
       recipe_search_term.text(recipeNameForHeader)
                         .addClass("center-align");
       serve_number.html(SERVER_NUMBER + food_data.hits[j].recipe.yield);
-      cuisine_type.html(CUISINE_TYPE + food_data.hits[j].recipe.cuisineType);  
+      cuisine_type.html(CUISINE_TYPE + food_data.hits[j].recipe.cuisineType); 
+      meal_type.html(MEAL_TYPE + food_data.hits[j].recipe.mealType); 
+      dish_type.html(DISH_TYPE + food_data.hits[j].recipe.dishType);   
 
       var ingredientNode = $("<div>")  
-      ingredientNode.attr("ing_list_data_id", "ing_list_data_" + j);
+      ingredientNode.attr("ing_list_data_id", "ing_list_data_" + j); // just in case
       ingredientNode.addClass("ingredient_list");
       for ( var i = 0; i < food_data.hits[j].recipe.ingredientLines.length; i++){
         var ingredient = $("<button>")
         ingredient.addClass("quantity_line");
-        ingredient.attr("ing_item_id", "ing_item_" + i);
+        ingredient.attr("ing_item_id", "ing_item_" + i); // just in case
         ingredient.val(food_data.hits[j].recipe.ingredientLines[i]); 
         ingredient.html(PLUS_SIGN + HTML_DSPACE + food_data.hits[j].recipe.ingredientLines[i]); 
         ingredient.attr("title", ENG2METRIC_CVRT_INST);
@@ -198,19 +228,6 @@ function displayRecipeGroup(food_data, recipeResultSize)
      
       ingredient_desc.html(INGREDIENT_DESC);
       ingredient_desc.append(ingredientNode);
-
-//       // -- short way to create click-event handler for each ingredient "button" rendered as description line
-//       $("button[class='quantity_line']").on( "click", function() {
-//         $(this).css("background-color", "#f2f2f2")
-//         var ingData = $(this).val()
-//         getScannedForImperialUnitConvertable(ingData)
-//         // alert(ingData);
-//       });
-// 
-//       $("button[class='quantity_line']").mouseover( "click", function() {
-//         $(this).attr("title", ENG2METRIC_CVRT_INST);
-//          
-//       });
 
       //----------------------START OF RECIPE DIRECTION --------------------------------
 
@@ -392,6 +409,8 @@ function displayRecipeGroup(food_data, recipeResultSize)
                         .append(recipe_search_term)
                         .append(serve_number)
                         .append(cuisine_type)
+                        .append(meal_type)
+                        .append(dish_type)
                         .append(ingredient_desc)
                         .append(recipe_direction)
                         .append(nutrient_info);
@@ -919,22 +938,23 @@ function displayConvertedEntity(unit_data, lineDesc){
 
 }
 
-// Active with Adaman food data API
+// Active with Adaman food data API - called when button search is clicked
 var getRecipeEntity = function(recipephrase, searchOptions)
 {
-  // // currentLocalStorageSize = localStorage.length;   
-  // // searchClick = (currentLocalStorageSize) ? currentLocalStorageSize : 0;
-  // // // alert("searchClick value per storageLength: " + searchClick);
-  // // searchClick += 1;
-  // // var searchByClicking = {
-  // //    searchID: searchClick,
-  // //    searchDateTime: moment(),
-  // //    searchTerm: recipephrase}
-  // //    
-  // // // local storage implementation
-  // // searchRecord.push(searchByClicking);
-  // //  localStorage.setItem(searchByClicking.searchTerm + UNDERSCORE + searchByClicking.searchID, JSON.stringify(searchByClicking));
-  
+  currentLocalStorageSize = localStorage.length;   
+  searchClick = (currentLocalStorageSize) ? currentLocalStorageSize : 0;
+  // alert("searchClick value per storageLength: " + searchClick);
+  searchClick += 1;
+
+  var searchByClicking = {
+    searchID: searchClick,
+    searchDateTime: moment(),
+    searchTerm: recipephrase}
+
+  // local storage implementation
+  searchRecord.push(searchByClicking);
+  localStorage.setItem(searchByClicking.searchTerm + UNDERSCORE + searchByClicking.searchID, JSON.stringify(searchByClicking));
+
   var apiFoodUrl = STRING_EMPTY;
   // -- cuisine-type defaults to American
   apiFoodUrl = 'https://api.edamam.com/api/recipes/v2?app_id=' + APP_ID + '&app_key=' + API_KEY 
@@ -994,7 +1014,7 @@ var getRecipeEntity = function(recipephrase, searchOptions)
         {
         // console.log(food_data);
         // -- action
-        result = displayRecipeHits(food_data);
+        result = displayRecipeHits(food_data, searchByClicking);
         if(result = null){
           console.log("No recipe hit found or an error has occurred");
         }
@@ -1011,6 +1031,69 @@ var getRecipeEntity = function(recipephrase, searchOptions)
       console.log("An error has occured: " + error);
   }); // it ends here
   
+}
+
+// Determines whether to display item history if history exists when page first loads - key/value approach
+function renderItemSearchHistory(){
+  currentLocalStorageSize = localStorage.length;
+  // setHistoryColumnVisibility(currentLocalStorageSize);
+  if(currentLocalStorageSize){
+     showHistoryController();
+     searchRecord.length = 0;
+     
+     for(var i=0; i < currentLocalStorageSize; i++) {
+         // extraction
+        let keyalias = localStorage.key(i);
+        var itemRowValueOfKey = JSON.parse(localStorage.getItem(keyalias));
+        
+        var searchByClicking = {
+           searchID: itemRowValueOfKey.searchID,
+           searchDateTime: moment(itemRowValueOfKey.searchDateTime),
+           searchTerm: itemRowValueOfKey.searchTerm }         
+        
+        searchRecord.push(searchByClicking);
+     }
+
+     // // searchRecord.sort(function(a, b){
+     // //    return a.searchID - b.searchID;
+     // // });
+
+     // sort the data by date using moment.js
+     searchRecord.sort(function (momentObjLeft, momentObjRight) {
+        return (momentObjLeft.searchDateTime).diff((momentObjRight.searchDateTime))
+     });
+
+     console.log(searchRecord); // sorted array asc
+     
+     // -- remove old children div before append new div of new city 
+     if ($("#recently").has("input")){
+        $("#recently").empty();
+     }
+   
+     for(var j=0; j < searchRecord.length; j++) {
+        
+        var searchDate = moment(searchRecord[j].searchDateTime);
+        var searchTime = moment(searchRecord[j].searchDateTime);
+        if(((j)%3 != 0))
+        {
+          var itemHistory = $("<p>").addClass("history")
+          .attr("title", PRETEXT_HISTORY + searchDate.format('dddd, MMMM Do YYYY') + SPACE + TIMESTAMP + searchTime.format('LTS'))
+          .text((searchRecord[j].searchTerm));
+           $("#recently").append(itemHistory);
+        }
+        else{
+          var itemHistory = $("<p>").addClass("history_alt")
+          .attr("title", PRETEXT_HISTORY + searchDate.format('dddd, MMMM Do YYYY') + SPACE + TIMESTAMP + searchTime.format('LTS'))
+          .text((searchRecord[j].searchTerm));
+          $("#recently").append(itemHistory);
+        }
+       
+     }
+
+     $("#recently").append(itemHistory);  
+     // console.log($("#pole_blue_theme").children())
+     // setHistoryColumnVisibility(currentLocalStorageSize);
+  }
 }
 
 // Handle submission as button is of type submit not type button
@@ -1087,7 +1170,6 @@ var quickFetchUnit = function()
   }); // it ends here
 
 }
-
 
 renderLandingPage()
 

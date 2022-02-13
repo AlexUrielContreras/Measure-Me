@@ -99,8 +99,32 @@
             </div>
           </form>
           <div class="center-align msg-box" id="message_box"> </div>
-          <div class="recent-searches"> </div>
+          <!-- <div class="recent-searches recent-box" id="recently"> where I am on loading </div> -->
+          <!-- <div class="recent-searches recent-box" id="recently"> </div> -->
+          <div class="row content-box" id="history_box" >
+            <div class="col s12 .recent-box" id="recently" >
+
+            </div>
+            <div class="col s12 .recent-box" id="history_controller"  > 
+              <div class="col s3 .recent-box" >
+                <!-- <a id="btnExpand" href="#!"
+                onclick="expandHistory()"      
+                >Expand</a> -->
+              </div>
+              <div class="col s3 .recent-box" ></div>
+              <div class="col s3 .recent-box" >
+              </div>
+              <div class="col s3 .recent-box"  > 
+              
+                <a id="btnClear" href="#!"
+                   onclick="clearHistory()"       
+                >Hide Search History</a>
+              </div>
+            </div>
+ 
+          </div>
         </div>
+        
       </section>
       
       <section class="container">
@@ -128,7 +152,8 @@
   <!-- jQuery UI is loaded after the core jQuery library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-   <script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <script>
      function removeTrigger(){
         var btnEl = document.getElementById("btn");
         if(btnEl.classList.contains("modal-trigger")){
@@ -142,6 +167,28 @@
         if(!recipephrase){
         btnEl.classList.add("modal-trigger");
         btnEl.click();}
+     }
+     function clearHistory(){
+        if($("#recently").has("p")){
+          $("#recently").empty();
+          $("#btnExpand").hide();
+          $("#btnClear").hide();
+        }
+     }
+     function expandHistory(){
+        alert($("#recently").height())
+        if($("#recently").height() <= 130){
+          alert("im too short")
+          $("#recently").height(450);
+          $("#btnExpand").text("Collapse")
+         
+        }
+        else{
+          alert("im too tall")
+          $("#recently").height(125);
+          $("#btnExpand").text("Expand")
+          
+        }
      }
    
   </script>
