@@ -23,7 +23,7 @@ let searchClick = 0;
 const SERVER_NUMBER = "<strong>Yield: </strong>";
 const CUISINE_TYPE = "<strong>Cuisine type: </strong>";
 const INGREDIENT_DESC = "<strong>Ingredients: </strong>";
-const NUTRIENT_INFO = "<strong>Nutrients: </strong>";
+const NUTRIENT_INFO = "<strong>Nutrients Information: </strong>";
 const DIRECTION_INFO = "Directions";
 const SOURCE_INFO = "Source:"
 const METRIC = " - Metric";
@@ -58,14 +58,6 @@ function renderLandingPage(){
   // renderItemSearchHistory()
 }
 
-// function removeModalTrigger(){
-//  
-//   if($("#btn").hasClass("modal-trigger") > 6){
-//     alert("more than 6 classes")
-//     $("#btn").removeClass('modal-trigger');
-//   }
-// }
-//--------------------------//
 function hideUnitBox(){
   $("#unit_box").hide();
 }
@@ -75,7 +67,6 @@ function showUnitBox(){
   $("#unit_box").show(900);
   
 }
-
 
 function hideRecipeBox(){
   $("#recipe_box").hide();
@@ -121,22 +112,10 @@ function showNoRecordResult()
   // removeModalTrigger();
 }
 
-function createEntityClickEventHandler(){
-  // var ingredientNode = document.querySelector("div[class='ingredient_list']");
-  // if(ingredientNode != null)
-  // {
-  //   ingredientNode.addEventListener("click", ingredientButtonHandler);
-  // }
-  // var nutrientNode = document.querySelector("div[class='nutrient_list']");
-  // if(nutrientNode != null)
-  // {
-  //   nutrientNode.addEventListener("click", ingredientButtonHandler);
-  // }
-}
 
+// utility function - to create a list of single (bullet) 
 function createLinesOfQuantitySpecification(lineNumber){
   for ( var i = 0; i < lineNumber; i++){
-
     var ingredient = $("<button>")
       ingredient.addClass("quantity_line");
       ingredient.html(HTML_BULLET + HTML_DSPACE + food_data.hits[j].recipe.ingredientLines[i]); 
@@ -183,13 +162,9 @@ function displayRecipeHits(food_data){
     }
   }
   
-  
-  
-  // showRecipeBox(displayResult);
-  // showUnitBox();
-  // createEntityClickEventHandler();
 }
 
+// The heart of api server utilizing as the data got fetched succesfully from edamam and ready to be renderred dynamically here:
 function displayRecipeGroup(food_data, recipeResultSize)
 {
   success = true;
@@ -224,16 +199,20 @@ function displayRecipeGroup(food_data, recipeResultSize)
       ingredient_desc.html(INGREDIENT_DESC);
       ingredient_desc.append(ingredientNode);
 
-      $("button[class='quantity_line']").on( "click", function() {
-        $(this).css("background-color", "#f2f2f2")
-        var ingData = $(this).val()
-        alert(ingData);
-      });
+//       // -- short way to create click-event handler for each ingredient "button" rendered as description line
+//       $("button[class='quantity_line']").on( "click", function() {
+//         $(this).css("background-color", "#f2f2f2")
+//         var ingData = $(this).val()
+//         getScannedForImperialUnitConvertable(ingData)
+//         // alert(ingData);
+//       });
+// 
+//       $("button[class='quantity_line']").mouseover( "click", function() {
+//         $(this).attr("title", ENG2METRIC_CVRT_INST);
+//          
+//       });
 
-      $("button[class='quantity_line']").mouseover( "click", function() {
-        $(this).attr("title", ENG2METRIC_CVRT_INST);
-         
-      });
+      //----------------------START OF RECIPE DIRECTION --------------------------------
 
       var recipe_direction = $("<div>");
       var howtoRedirect = $("<a>")
@@ -257,6 +236,8 @@ function displayRecipeGroup(food_data, recipeResultSize)
       var h3El = $("<h3>")
       h3El.addClass("center-align")
           .append(recipeSpanImage);
+       
+      //--------------------------------------- END OF RECIPE RENDERING ----------------------------------------
 
       var calorie = $("<button>");
       calorie.addClass("quanity_line_nutrient");
@@ -414,8 +395,21 @@ function displayRecipeGroup(food_data, recipeResultSize)
                         .append(ingredient_desc)
                         .append(recipe_direction)
                         .append(nutrient_info);
-    } // end for loop
+    } // end for loop -------------------------------------------------
+    // -- short way to create click-event handler for each ingredient "button" rendered as description line
+    $("button[class='quantity_line']").on( "click", function() {
+      $(this).css("background-color", "#f2f2f2")
+      var ingData = $(this).val()
+      getScannedForImperialUnitConvertable(ingData)
+      // alert(ingData);
+    });
 
+    $("button[class='quantity_line']").mouseover( "click", function() {
+      $(this).attr("title", ENG2METRIC_CVRT_INST);
+       
+    });
+
+     // -- short way to create click-event handler for each nutrient "button"
     $("button[class='quanity_line_nutrient']").on("click", function() {
       $(this).css("background-color", "#f2f2f2")
       var nutriData = $(this).val()
@@ -430,13 +424,12 @@ function displayRecipeGroup(food_data, recipeResultSize)
     return success;
 }
 
+// Deals with the nutrient lines extracting the numeric data and perspective unit
 function getScannedForMetricConvertable(nutriData){
   let portionLabel = nutriData.split(COLON)[0].trim();
   let portionNoneLabel = nutriData.split(COLON)[1].trim();
   quantity = portionNoneLabel.split(SPACE);
-  // alert(portionNoneLabel)
-  // alert("I think this is the numeric: " + quantity[0].trim()) 
-  // alert ("this is the unit: " + quantity[1].trim()) 
+ 
   var lineNutrient = {
     original : nutriData,
     preceedingNum: portionLabel,
@@ -452,13 +445,15 @@ function getScannedForMetricConvertable(nutriData){
    
 };
 
+// In Use to keep the Unit Conversion box populated with before and after in regard to what is to be converted 
 function displayConvertedEntityNutrient(lineNutrient){
   var lineDescTextAfter = STRING_EMPTY;
   var afterQuestionMark = lineNutrient.apirequest.split("=");
   var toUnitQueryString = afterQuestionMark[1].split("&");
   var toUnit = toUnitQueryString[0];
 
-  lineDescTextAfter =  ((lineNutrient.num)/28.34952).toFixed(2) + SPACE + toUnit;
+  // For illustration purpose only - micro gram is not accurate - only gram to ounce is
+  lineDescTextAfter =  ((lineNutrient.num)/28.34952).toFixed(2) + SPACE + toUnit; // we're using arithmetic computing since server Api is down
 
   var nutrient_desc_english = $("<div>");
   nutrient_desc_english.html(NUTRIENT_INFO + IMPERIAL);
@@ -482,7 +477,8 @@ function displayConvertedEntityNutrient(lineNutrient){
   var nutrientAfter = $("<button>")
   nutrientAfter.addClass("quantity_line");
   nutrientAfter.val(lineNutrient.preceedingNum + lineDescTextAfter); 
-  nutrientAfter.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + lineNutrient.preceedingNum + "</strong>" + SPACE + lineDescTextAfter); 
+  nutrientAfter.html(PLUS_SIGN + HTML_DSPACE + "<strong>" + lineNutrient.preceedingNum + "</strong>" + COLON + SPACE + lineDescTextAfter); 
+  nutrientAfter.css("color", "#28a191");
   nutrientNodeAfter.append(nutrientAfter);
   
   nutrient_desc_english.html(INGREDIENT_DESC + "- Imperial");
@@ -492,6 +488,71 @@ function displayConvertedEntityNutrient(lineNutrient){
   $("#target_converting_line").append(nutrient_desc_metric); 
   $("#target_converting_line").append(nutrient_desc_english);
   
+}
+
+// Looks at ingredient raw data
+function getScannedForImperialUnitConvertable(ingData){
+  // -- we could call scanCup(), scanOunce(), etc here but the server API didn't suport fetching from code behind
+  // so we just render the raw data at the unit conversion box as if it's been treat. We modify when time allows
+  var lineDesc = {
+    original : ingData,
+    preceedingNum: STRING_EMPTY,
+    num: STRING_EMPTY,
+    unit: STRING_EMPTY,
+    desc: STRING_EMPTY,
+    type: commonKitchenUnits.CUP,
+    apirequest: "https://neutrinoapi.net/convert?to-type=Liter&user-id=" + CVTR_APP_ID + "&api-key=" + CVTR_API_KEY + "&from-type=Pint&from-value="
+  }
+ 
+  // // ready to be fetched to get the converted data from server API site but it does not let us do it
+  // // so we might as well display it in a certain form as if the API is running
+  displayConvertedEntityIngredient(lineDesc);
+   
+};
+
+function displayConvertedEntityIngredient(lineDesc){
+  var lineDescTextAfter = STRING_EMPTY;
+  var afterQuestionMark = lineDesc.apirequest.split("=");
+  var toUnitQueryString = afterQuestionMark[1].split("&");
+  var toUnit = toUnitQueryString[0];
+
+  // // Put all the chuck from server API data from which we would have extracted and converted and put them back here
+  lineDescTextAfter = lineDesc.preceedingNum + "[0.18]" + SPACE + toUnit + SPACE + lineDesc.desc;
+
+  // But just going to copy the raw data over for Right Box illustratin purpose
+  lineDescTextAfter = lineDesc.original;
+
+  var ingredient_desc_english = $("<div>");
+  ingredient_desc_english.html(INGREDIENT_DESC + IMPERIAL);
+  var ingredient_desc_metric = $("<div>");
+  ingredient_desc_metric.html(INGREDIENT_DESC + METRIC);
+
+  var ingredientNodeBefore = $("<div>")  
+  ingredientNodeBefore.addClass("ingredient_list");
+
+  var ingredient = $("<button>")
+  ingredient.addClass("quantity_line");
+  ingredient.val(lineDesc.original); 
+  ingredient.html(PLUS_SIGN + HTML_DSPACE + lineDesc.original); 
+  
+  ingredientNodeBefore.append(ingredient);  
+  ingredient_desc_english.append(ingredientNodeBefore);
+
+  var ingredientNodeAfter = $("<div>")  
+  ingredientNodeAfter.addClass("ingredient_list");
+
+  var ingredientAfter = $("<button>")
+  ingredientAfter.addClass("quantity_line");
+  ingredientAfter.val(lineDescTextAfter); 
+  ingredientAfter.css("color", "#61b4da;")
+  ingredientAfter.html(PLUS_SIGN + HTML_DSPACE + "[ " + lineDescTextAfter + " ]"); 
+  ingredientNodeAfter.append(ingredientAfter);
+  
+  ingredient_desc_metric.html(INGREDIENT_DESC + "- Metric");
+  ingredient_desc_metric.append(ingredientNodeAfter);  
+  $("#target_converting_line").append(ingredient_desc_english); //display at Right box
+  $("#target_converting_line").append(ingredient_desc_metric);
+
 }
 
 //-------------------------------------Scan unit in desc for dynamic conversion ----------------------
@@ -701,8 +762,8 @@ function scanOunce(ingData)
 }
 
 // This handles event when the ingredient line is clicked to get target unit converted
+// No longer in use - there's shorter way
 var ingredientButtonHandler = function(event) {
-   
   var lineDesc = {
     num: STRING_EMPTY,
     unit: STRING_EMPTY,
@@ -749,8 +810,9 @@ var ingredientButtonHandler = function(event) {
   } // end if
 }
 
+// No longer in use becuase of API's Cors Policy
 var getUnitEntityConvertedPerAPI = function(lineDesc){
-  alert("ready to be converted");
+  // alert("ready to be converted");
   var apiUnitUrl = lineDesc.apirequest + lineDesc.num;
   // clear old unit converter content
   if ($("#target_converting_line").has("<button>")){
@@ -785,10 +847,13 @@ var getUnitEntityConvertedPerAPI = function(lineDesc){
 
 }
 
-// Display ingredient line before and after being convert on pick/click
+//------------------------------------End of unit scanning for server API unit-converting------------------------------
+
+// Display ingredient line before and after being convert on mouse-click
+// Useful in obj property datastructure but no longer active
 function displayConvertedEntity(unit_data, lineDesc){
   displayResult = true;
-  alert("type is: " + lineDesc.type);
+  // alert("type is: " + lineDesc.type);
   var lineDescTextAfter = STRING_EMPTY;
   var afterQuestionMark = lineDesc.apirequest.split("=");
   var toUnitQueryString = afterQuestionMark[1].split("&");
@@ -854,6 +919,7 @@ function displayConvertedEntity(unit_data, lineDesc){
 
 }
 
+// Active with Adaman food data API
 var getRecipeEntity = function(recipephrase, searchOptions)
 {
   // // currentLocalStorageSize = localStorage.length;   
@@ -947,6 +1013,7 @@ var getRecipeEntity = function(recipephrase, searchOptions)
   
 }
 
+// Handle submission as button is of type submit not type button
 var formSubmitHandler = function(event){
   event.preventDefault();
   var recipephrase = recipeInputEl.value.trim();
@@ -973,6 +1040,7 @@ var formSubmitHandler = function(event){
 
 }
 
+// Form element wants to make keydown event equivalent to submitting
 recipeSearchFormEl.addEventListener("keydown", function (event) {  
    // -- checks if the enter key was the key pressed.
   if (event.key === "Enter") {
@@ -982,10 +1050,10 @@ recipeSearchFormEl.addEventListener("keydown", function (event) {
   }
 });
 
-recipeSearchFormEl.addEventListener("submit", formSubmitHandler);
- 
-// btn.addEventListener("click", onFormSubmit);
+// Form element wants to listen submit event from button of type submit
+recipeSearchFormEl.addEventListener("submit", formSubmitHandler); 
 
+// Testing food API - currently cannot be utilized due to Cors Policy error message
 var quickFetchUnit = function()
 {
   //  -- cuisine-type defaults to American if not specified otherwise:
@@ -1019,8 +1087,6 @@ var quickFetchUnit = function()
   }); // it ends here
 
 }
-
-// quickFetchUnit();
 
 
 renderLandingPage()

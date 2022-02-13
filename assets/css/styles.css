@@ -43,7 +43,7 @@
 }
 
 input:focus{
-    color:rgb(40, 161, 145)
+    color:#28a191
 }
 
 .recipe-box, .unit-box, .msg-box{
