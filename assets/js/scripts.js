@@ -12,7 +12,8 @@ const HTML_DSPACE = "&nbsp;&nbsp;";
 const APP_ID = '90242961' ;
 const API_KEY = '9460d3016254646a35748a9dcc6faa0a';
 const CVTR_APP_ID = 'UnitMercuryKT' ;
-const CVTR_API_KEY = 'D7gd6C9kSNGjkMd1G3HqIVcF3UPmMaOv0qlqA7YpGLvsFaOa';
+const CVTR_API_KEY = '54WxdnbwWSE2TmuOexQ8bMyNbl1gBBc1wl3AhuRlVt9W9mlw';
+var DEFAULT_CUISINE = 'American';
 
 let searchRecord = [];
 let searchClick = 0;
@@ -43,39 +44,96 @@ const utype = {
   LBS: 5
 }
 
+var recipeSearchFormEl = document.querySelector("#recipe_form");
+var recipeInputEl = document.querySelector("#search-form");
+
 //----------------------------------------RECIPE-KT-------------------------------------------/
+function renderLandingPage(){
+  hideBtnAlias();
+  hideRecipeBox();
+  hideUnitBox();
+  hideMessageBox();
+  $("#search-form").focus()
+  // renderItemSearchHistory()
+}
+
+function hideBtnAlias(){
+  $("#btnAlias").hide();
+}
+
+function showBtnAlias(){
+  $("#btnAlias").show();
+}
+
+function removeModalTrigger(){
+ 
+  if($("#btn").hasClass("modal-trigger") > 6){
+    alert("more than 6 classes")
+    $("#btn").removeClass('modal-trigger');
+  }
+}
+//--------------------------//
 function hideUnitBox(){
   $("#unit_box").hide();
 }
 
 function showUnitBox(){
-  $("#unit_box").show(1000);
+  $("#unit_box").height(900);
+  $("#unit_box").show(900);
+  // removeModalTrigger();
 }
-//--------------------------//
+
 
 function hideRecipeBox(){
   $("#recipe_box").hide();
+  // removeModalTrigger();
 }
 
 function showRecipeBox(displayResult){
   if(displayResult){
-    $("#recipe_box").show(1000);
-    createEntityClickEventHandler(); 
+    hideMessageBox();
+    $("#recipe_box").height(900);
+    $("#recipe_box").show(900);
+    // removeModalTrigger();
+    // createEntityClickEventHandler(); 
     showUnitBox(); 
   }
   else{
-    $("#recipe_box").empty();
-    $("#recipe_box").html("An error has occured. Please try again later.")
+    
+    $("#message_box").html("Invalid input or an error has occured. Please try again.")
+    showMessageBox();
     hideUnitBox();
-    $("#recipe_box").show(1000);
-
+    // removeModalTrigger();
   }
   
 }
 
+function hideMessageBox(){
+  $("#message_box").hide();
+  // removeModalTrigger();
+}
+
+function showMessageBox(){
+  $("#message_box").height(100);
+  $("#message_box").show(1200);  
+  // removeModalTrigger();
+}
+
+function showNoRecordResult()
+{   
+  $("#message_box").html("No recipe is found at this time. <br> Please check your spelling or try other search option(s).")
+  hideUnitBox();
+  hideRecipeBox();
+  showMessageBox();  
+  // removeModalTrigger();
+}
+
 function createEntityClickEventHandler(){
   var ingredientNode = document.querySelector("div[class='ingredient_list']");
-  ingredientNode.addEventListener("click", ingredientButtonHandler);
+  if(ingredientNode != null)
+  {
+    ingredientNode.addEventListener("click", ingredientButtonHandler);
+  }
 }
 
 function createLinesOfQuantitySpecification(lineNumber){
@@ -86,57 +144,41 @@ function createLinesOfQuantitySpecification(lineNumber){
       ingredient.html(HTML_BULLET + HTML_DSPACE + food_data.hits[j].recipe.ingredientLines[i]); 
       ingredientNode.append(ingredient);
 
-//     var uniqueBtn = document.createElement("button");
-//     uniqueBtn.className = "quantity_line";
-//     uniqueBtn.setAttribute("id", i + "_" + askawayId);
-//     uniqueBtn.textContent = (i + 1) + ITEM_ORDER_PERIOD + SPACE + quizDataObj.choices[i];
-//     uniqueBtn.setAttribute("data-task-id", askawayId);   
-// 
-//     if ((quizDataObj.correctAnsNumber) == (i + 1)){
-//        uniqueBtn.setAttribute("data-ans-value", TRUE); 
-//     }
-//     else{
-//        uniqueBtn.setAttribute("data-ans-value", FALSE);
-//     }
-// 
-//     if(needExpandBeyondMedWidth){
-//        uniqueBtn.style.width = CHOICE_WIDTH_PASS_MIDLEN;
-//     }
-// 
-//     if(smallWidthSuffices){
-//        uniqueBtn.style.width = CHOICE_WIDTH_PASS_SML_LEN;
-//     }
-// 
-//     actionContainerEl.appendChild(uniqueBtn);
  }  
 }
-
-
 
 // Create elements and populate them with data returned from an recipe api fetch
 function displayRecipeHits(food_data){
   console.log(food_data);
-  displayResult = true;
+  displayResult = true; // set initial condition to detect when it becomes false
   // -- clear old content
-
-  // -- remove old img before append current image
   if ($("#target_recipe").has("img")){
     $("#target_recipe").empty();
     }
-
-  // if ($("#target_recipe").has("span[class='recipe-box'")){
-  // $("#target_recipe").empty();
-  // }
-
-  if(food_data.hits.length >=5 ){
-    // -- display up to 5 recipes
-    displayResult = displayRecipeGroup(food_data, 5);
-  }
-  else
+  if(food_data != null)
   {
-    displayResult = displayRecipeGroup(food_data, parseInt(food_data.hits.length));
+    if(food_data.count != 0){
+      // alert("no record in set");
+      if(food_data.hits.length >=5 ){
+        // -- display up to 5 recipes
+        displayResult = displayRecipeGroup(food_data, 5);
+        createEntityClickEventHandler(); 
+        showRecipeBox(displayResult);
+      }
+      else
+      {
+        displayResult = displayRecipeGroup(food_data, parseInt(food_data.hits.length));
+        createEntityClickEventHandler(); 
+        showRecipeBox(displayResult);
+      }
+    }
+    else{
+      showNoRecordResult()
+    }
   }
-  showRecipeBox(displayResult);
+  
+  
+  
   // showRecipeBox(displayResult);
   // showUnitBox();
   // createEntityClickEventHandler();
@@ -159,15 +201,6 @@ function displayRecipeGroup(food_data, recipeResultSize)
                         .addClass("center-align");
       serve_number.html(SERVER_NUMBER + food_data.hits[j].recipe.yield);
       cuisine_type.html(CUISINE_TYPE + food_data.hits[j].recipe.cuisineType);  
-
-      // //     var ingredientNode = $("<ul>")
-      // //     for (var i = 0; i < food_data.hits[j].recipe.ingredientLines.length ; i++)
-      // //     {
-      // // 
-      // //       var ingredient = $("<li>")
-      // //       ingredient.html(HTML_BULLET + HTML_DSPACE + food_data.hits[j].recipe.ingredientLines[i]); 
-      // //       ingredientNode.append(ingredient);
-      // //     }
 
       var ingredientNode = $("<div>")  
       ingredientNode.attr("ing_list_data_id", "ing_list_data_" + j);
@@ -537,14 +570,14 @@ var ingredientButtonHandler = function(event) {
 
     if(unitEntityHit != null)
     {
-      alert("CUP FOUND!")
+      // alert("CUP FOUND!")
       getUnitEntityConvertedPerAPI(unitEntityHit);
     }
     else{
       unitEntityHit = scanOunce(ingData);
       if(unitEntityHit != null)
       {
-        alert("OUNCE FOUND!")
+        // alert("OUNCE FOUND!")
         getUnitEntityConvertedPerAPI(unitEntityHit);
       }
       else
@@ -552,7 +585,7 @@ var ingredientButtonHandler = function(event) {
         unitEntityHit = scanTablespoon(ingData);
         if(unitEntityHit != null)
         {
-          alert("TABLESPOON FOUND!")
+          // alert("TABLESPOON FOUND!")
           getUnitEntityConvertedPerAPI(unitEntityHit);
         }
       }
@@ -568,29 +601,29 @@ var getUnitEntityConvertedPerAPI = function(lineDesc){
     $("#target_converting_line").empty();
     }
    
-    // // fetch(apiUnitUrl
-    // //   
-    // //  ).then(function(unit_response) 
-    // //  {
-    // //   if(unit_response.ok)
-    // //   {
-    // //       unit_response.json().then(function(unit_data)
-    // //       {
-    // //       console.log(unit_data);
-    // //       // -- action
-    // //       displayConvertedEntity(unit_data, lineDesc);
-    // //       
-    // //   });
-    // //   }
-    // //   else
-    // //   {
-    // //       console.log("Error: Recipe Data Not Found"); // status 400
-    // //   }
-    // //       
-    // // })  
-    // // .catch(function(error){
-    // //     console.log("An error has occured: " + error);
-    // // }); // it ends here
+    fetch(apiUnitUrl
+      
+     ).then(function(unit_response) 
+     {
+      if(unit_response.ok)
+      {
+          unit_response.json().then(function(unit_data)
+          {
+          console.log(unit_data);
+          // -- action
+          displayConvertedEntity(unit_data, lineDesc);
+          
+      });
+      }
+      else
+      {
+          console.log("Error: Recipe Data Not Found"); // status 400
+      }
+          
+    })  
+    .catch(function(error){
+        console.log("An error has occured: " + error);
+    }); // it ends here
 
     displayConvertedEntity("", lineDesc);
 
@@ -664,7 +697,7 @@ function displayConvertedEntity(unit_data, lineDesc){
 
 }
 
-var getRecipeEntity = function(recipephrase)
+var getRecipeEntity = function(recipephrase, searchOptions)
 {
   // // currentLocalStorageSize = localStorage.length;   
   // // searchClick = (currentLocalStorageSize) ? currentLocalStorageSize : 0;
@@ -679,15 +712,59 @@ var getRecipeEntity = function(recipephrase)
   // // searchRecord.push(searchByClicking);
   // //  localStorage.setItem(searchByClicking.searchTerm + UNDERSCORE + searchByClicking.searchID, JSON.stringify(searchByClicking));
 
+  var apiFoodUrl = STRING_EMPTY;
+  // -- cuisine-type defaults to American
+  apiFoodUrl = 'https://api.edamam.com/api/recipes/v2?app_id=' + APP_ID + '&app_key=' + API_KEY 
+                  + '&type=public&cuisineType=american&q=' + recipephrase;
+
+  // If someone changes the default cuisine to anything else
+  if (searchOptions.cuisineType.toString().toLocaleLowerCase() != DEFAULT_CUISINE.toLocaleLowerCase())
+  {
+    apiFoodUrl = 'https://api.edamam.com/api/recipes/v2?app_id=' + APP_ID + '&app_key=' + API_KEY 
+                   + '&type=public&cuisineType=' + searchOptions.cuisineType
+                   + '&mealType=' + searchOptions.mealType 
+                   + '&dishType=' + searchOptions.dishType 
+                   + '&q=' + recipephrase;   
+                  //  alert("all are present");
+                  //  alert( searchOptions.cuisineType)
+  }
+  if (searchOptions.mealType == STRING_EMPTY)
+  {
+    apiFoodUrl = 'https://api.edamam.com/api/recipes/v2?app_id=' + APP_ID + '&app_key=' + API_KEY 
+                  + '&type=public&cuisineType=' + searchOptions.cuisineType
+                  + '&dishType=' + searchOptions.dishType 
+                  + '&q=' + recipephrase;  
+    // alert("Meeallll Type absent");
+    // alert( searchOptions.cuisineType)
+  } 
+  if (searchOptions.dishType  == STRING_EMPTY)
+  {
+    apiFoodUrl = 'https://api.edamam.com/api/recipes/v2?app_id=' + APP_ID + '&app_key=' + API_KEY 
+                  + '&type=public&cuisineType=' + searchOptions.cuisineType
+                  + '&mealType=' + searchOptions.mealType 
+                  + '&q=' + recipephrase;  
+    //  alert("Disshhh-Type absent");              
+    //  alert( searchOptions.cuisineType)
+  }
+  if ((searchOptions.mealType == STRING_EMPTY) && (searchOptions.dishType == STRING_EMPTY))
+  {
+    apiFoodUrl = 'https://api.edamam.com/api/recipes/v2?app_id=' + APP_ID + '&app_key=' + API_KEY 
+                  + '&type=public&cuisineType=' + searchOptions.cuisineType
+                  + '&q=' + recipephrase;   
+                  // alert("Both Type absent");
+                  // alert( searchOptions.cuisineType)
+  }
+ 
+
   console.log(recipephrase);
 
   //  -- cuisine-type defaults to American if not specified otherwise:
-  apiFoodUrl = 'https://api.edamam.com/api/recipes/v2?app_id=' + APP_ID + '&app_key=' + API_KEY + '&type=public&cuisineType=american&q=' + recipephrase;
+  
   console.log("Inside getRecipeEntity : " + apiFoodUrl);
       
   fetch(apiFoodUrl).then(function(food_response) 
   {
-    // console.log(food_response); // 404 still display node Response, but headers ok property is false
+    // console.log(food_response);  
     if(food_response.ok)
     {
         food_response.json().then(function(food_data)
@@ -713,26 +790,83 @@ var getRecipeEntity = function(recipephrase)
 
 }
 
-var recipeSearchFormEl = document.querySelector("#recipe_form");
-var recipeInputEl = document.querySelector("#recipe_phrase");
-
 var formSubmitHandler = function(event){
   event.preventDefault();
   var recipephrase = recipeInputEl.value.trim();
+  var searchOptions = {
+    mealType : $("#meal_type").val(),
+    dishType : $("#dish_type").val(),
+    cuisineType : $("#cuisine_type :selected").text()
+  }
+
 
   if (recipephrase) {
-     getRecipeEntity(recipephrase);
-     recipeInputEl.value = STRING_EMPTY;
+    $("#btn").removeClass('modal-trigger'); 
+    getRecipeEntity(recipephrase, searchOptions);
+  
   } 
   else {
-     alert("Please enter a recipe search-phrase");
+    // Prompt for required input
+    $("#btn").addClass("modal-trigger")
+             .attr("data-target", "promt_req");
+    $('.modal').modal();
+    $("#btn").click();
+    
   }
 
 }
 
+recipeSearchFormEl.addEventListener("keydown", function (event) {  
+   // -- checks if the enter key was the key pressed.
+  if (event.key === "Enter") {
+    event.preventDefault();
+    // -- Trigger the button element with a click
+    document.getElementById("btn").click();
+  }
+});
+
 recipeSearchFormEl.addEventListener("submit", formSubmitHandler);
-hideRecipeBox();
-hideUnitBox();
+ 
+// btn.addEventListener("click", onFormSubmit);
+
+var quickFetchUnit = function()
+{
+  //  -- cuisine-type defaults to American if not specified otherwise:
+  apiFoodUrl = 'https://neutrinoapi.net/convert?to-type=Liter&user-id=UnitMercuryKT&api-key=54WxdnbwWSE2TmuOexQ8bMyNbl1gBBc1wl3AhuRlVt9W9mlw&from-type=Pint&from-value=0.375'
+  console.log("Inside getRecipeEntity : " + apiFoodUrl);
+      
+  fetch(apiFoodUrl).then(function(unit_response) 
+  {
+    // console.log(unit_response); // 404 still display node Response, but headers ok property is false
+    if(unit_response.ok)
+    {
+        unit_response.json().then(function(unitdata)
+        {
+        console.log(unitdata);
+        // -- action
+        // result = displayRecipeHits(unitdata);
+        if(result = null){
+          console.log("No recipe hit found or an error has occurred");
+        }
+        
+    });
+    }
+    else
+    {
+        console.log("Error: Recipe Data Not Found"); // status 400
+    }
+        
+  })  
+  .catch(function(error){
+      console.log("An error has occured: " + error);
+  }); // it ends here
+
+}
+
+// quickFetchUnit();
+
+
+renderLandingPage()
  
 
 

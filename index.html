@@ -36,49 +36,70 @@
             
             <h4 class="search-title">Search for a Recipe</h4>
             <label for="meal_type">Meal Type:</label>
-              <select id="meal_type" name="meal_type">
-                <option value="">Choose an option</option>
-                <option value="Breakfast">Breakfast</option>
-                <option value="Dinner"> Dinner</option>
-                <option value="Lunch">Lunch</option>
-                <option value="Snack">Snack</option>
-              </select>
+            <select id="meal_type" name="meal_type">
+              <option value="">Choose an option</option>
+              <option value="breakfast">Breakfast</option>
+              <option value="dinner"> Dinner</option>
+              <option value="lunch">Lunch</option>
+              <option value="lunch/dinner">Lunch/Dinner</option>
+              <option value="snack">Snack</option>
+            </select>
              
-              <label for="dish_type">Dish Type</label>
-              <select id="dish_type" name="dish_type">
-                <option value="">Choose an option</option>
-                <option value="Starter">Starter</option>
-                <option value="Main course">Main course</option>
-                <option value="Bread">Bread</option>
-                <option value="Salad">Salad</option>
-                <option value="Sandwiches">Sandwiches</option>
-                <option value="Soup">Soup</option>
-                <option value="Desserts">Desserts</option>
-                <option value="Sweets">Sweets</option>
-                <option value="Condiments and sauces">Condiments and sauces</option>
-              </select>
+            <label for="dish_type">Dish Type: </label>
+            <select id="dish_type" name="dish_type">
+              <option value="">Choose an option</option>
+              <option value="starter">Starter</option>
+              <option value="main course">Main course</option>
+              <option value="bread">Bread</option>
+              <option value="salad">Salad</option>
+              <option value="sandwiches">Sandwiches</option>
+              <option value="soup">Soup</option>
+              <option value="desserts">Desserts</option>
+              <option value="sweets">Sweets</option>
+              <option value="condiments and sauces">Condiments and sauces</option>
+            </select>
              
-              <label for="cuisine_type">Cuisine Type</label>
-              <select id="dish_type" name="dish_type">
-                <option value="American" selected>American</option>
-                <option value="Asian">Asian</option>
-                <option value="British">British</option>
-                <option value="Caribbean">Caribbean</option>
-                <option value="Central Europe">Central Europe</option>
-                <option value="Eastern Europe">Eastern Europe</option>
-                <option value="French">French</option>
-                <option value="Indian">Indian</option>
-                <option value="Italian">Italian</option>
-                <option value="Japanese">Japanese</option>
-                <option value="Mexican">Mexican</option>
-                <option value="Nordic">Nordic</option>
-              </select>
+            <label for="cuisine_type">Cuisine Type</label>
+            <select id="cuisine_type" name="cuisine_type">
+              <option value="american" selected>American</option>
+              <option value="asian">Asian</option>
+              <option value="british">British</option>
+              <option value="caribbean">Caribbean</option>
+              <option value="central Europe">Central Europe</option>
+              <option value="dastern Europe">Eastern Europe</option>
+              <option value="french">French</option>
+              <option value="indian">Indian</option>
+              <option value="italian">Italian</option>
+              <option value="japanese">Japanese</option>
+              <option value="mexican">Mexican</option>
+              <option value="nordic">Nordic</option>
+            </select>
             <div class="search-container">
-              <input class="" type="text" placeholder="Example: Smothered Pork" id="recipe_phrase">
-              <button type="submit" class="submit-btn waves-effect waves-light btn  blue-grey lighten-3">Search</button>
+                  <div id="promt_req" class="modal" tabindex="0" >
+                  <div class="modal-content">
+                    <h4>Thank you for visiting!</h4>
+                    <p>Please provide a search-phrase. This is a required field.</p>
+                  </div>
+                  <div class="modal-footer">
+                    <a href="#!" onclick="removeTrigger()" class="modal-close waves-effect waves-blue btn-flat">OK</a>
+                  </div>
+                </div>
+              <input class="search-field" 
+              type="text" 
+              placeholder="Example: Smothered Pork" 
+              id="search-form">
+              
+              <button 
+              id="btn" 
+              type="submit"
+              class="submit-btn waves-effect waves-light btn blue-grey lighten-3" 
+              autofocus              
+              >Search</button>
+              
             </div>
           </form>
-          <div class="recent-searches"></div>
+          <div class="center-align msg-box" id="message_box"> </div>
+          <div class="recent-searches"> </div>
         </div>
       </section>
       
@@ -103,6 +124,9 @@
               
             </div>
           </div>
+          <!-- Modal Trigger -->
+         
+          
         </div>
       </section>
     </main>
@@ -111,5 +135,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.15.0/umd/popper.min.js"></script>
   <!-- jQuery UI is loaded after the core jQuery library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+   <script>
+     function removeTrigger(){
+        var btnEl = document.getElementById("btn");
+        if(btnEl.classList.contains("modal-trigger")){
+        btnEl.classList.remove("modal-trigger");}
+     }
+   
+  </script>
   <script src="assets/js/scripts.js"></script>
 </html>
