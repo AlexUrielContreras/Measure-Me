@@ -953,7 +953,7 @@ var getRecipeEntity = function(recipephrase, searchOptions)
 
   // local storage implementation
   searchRecord.push(searchByClicking);
-  localStorage.setItem(searchByClicking.searchTerm + UNDERSCORE + searchByClicking.searchID, JSON.stringify(searchByClicking));
+  localStorage.setItem(searchByClicking.searchTerm + UNDERSCORE + CVTR_APP_ID + searchByClicking.searchID, JSON.stringify(searchByClicking));
 
   var apiFoodUrl = STRING_EMPTY;
   // -- cuisine-type defaults to American
@@ -1094,6 +1094,9 @@ function renderItemSearchHistory(){
      // console.log($("#pole_blue_theme").children())
      // setHistoryColumnVisibility(currentLocalStorageSize);
   }
+  else{
+    hideHistoryController();
+  }
 }
 
 // Handle submission as button is of type submit not type button
@@ -1110,7 +1113,7 @@ var formSubmitHandler = function(event){
     $("#btn").removeClass('modal-trigger');        
    
     getRecipeEntity(recipephrase, searchOptions);
-    
+    $("#recently").height(100); 
   } 
   else {
     // Prompt for required input
@@ -1140,12 +1143,19 @@ recipeSearchFormEl.addEventListener("submit", formSubmitHandler);
 var quickFetchUnit = function()
 {
   //  -- cuisine-type defaults to American if not specified otherwise:
-  apiFoodUrl = 'https://neutrinoapi.net/convert?to-type=Liter&user-id=UnitMercuryKT&api-key=54WxdnbwWSE2TmuOexQ8bMyNbl1gBBc1wl3AhuRlVt9W9mlw&from-type=Pint&from-value=0.375'
+  // apiFoodUrl = 'https://neutrinoapi.net/convert?to-type=Liter&user-id=UnitMercuryKT&api-key=54WxdnbwWSE2TmuOexQ8bMyNbl1gBBc1wl3AhuRlVt9W9mlw&from-type=Pint&from-value=0.375'
+  // console.log("Inside getRecipeEntity : " + apiFoodUrl);
+
+  var apiFoodUrl = 'https://neutrinoapi.net/convert?to-type=Liter&user-id=UnitMercuryKT&api-key=AEKUnitConversionGrpProjNeutrinoAPI&from-type=Pint&from-value=0.375'
   console.log("Inside getRecipeEntity : " + apiFoodUrl);
+
+  // //AEKUnitConversionGrpProjNeutrinoAPI13FEB
+  // var apiFoodUrl = 'https://neutrinoapi.net/convert?to-type=Liter&user-id=UnitMercuryKT&api-key=AEKUnitConversionGrpProjNeutrinoAPI13FEB&from-type=Pint&from-value=0.375'
+  // console.log("Inside getRecipeEntity : " + apiFoodUrl);
       
   fetch(apiFoodUrl).then(function(unit_response) 
   {
-    // console.log(unit_response); // 404 still display node Response, but headers ok property is false
+    //console.log(unit_response); // 404 still display node Response, but headers ok property is false
     if(unit_response.ok)
     {
         unit_response.json().then(function(unitdata)
@@ -1172,6 +1182,7 @@ var quickFetchUnit = function()
 }
 
 renderLandingPage()
+
 
 
 
