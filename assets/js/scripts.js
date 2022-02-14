@@ -589,8 +589,8 @@ function scanCup(ingData){
    
   for( var i = 0; i < commonRecipeUnits.cup.length; i++ )
   {
-    alert("i'm in for loop cup")
-    alert(ingData)
+    // alert("i'm in for loop cup")
+    // alert(ingData)
     found = ingData.indexOf(commonRecipeUnits.cup[i]);
     console.log(found);
     if(found != -1)
@@ -632,11 +632,11 @@ function scanTablespoon(ingData)
   }
   for( var i = 0; i < commonRecipeUnits.bigspoon.length; i++ )
   {
-    alert("i'm in for table-spoon loop")
+    // alert("i'm in for table-spoon loop")
     found = ingData.indexOf(commonRecipeUnits.bigspoon[i]);
     if(found != -1)
     {
-      alert("i'm Found in loop bigspoon")
+      // alert("i'm Found in loop bigspoon")
       var arr = ingData.split(commonRecipeUnits.bigspoon[i]);
       console.log(arr);
       console.log(arr[0]);
@@ -650,7 +650,7 @@ function scanTablespoon(ingData)
           if(arrLeft.includes(SLASH))
           {
             var vicinitySlashes = arr[0].split(SLASH);
-            alert("ratio is: " + vicinitySlashes[0])
+            // alert("ratio is: " + vicinitySlashes[0])
             lineDesc = {
               original : ingData,
               preceedingNum: STRING_EMPTY,
@@ -721,11 +721,11 @@ function scanOunce(ingData)
   for( var i = 0; i < commonRecipeUnits.ounce.length; i++ )
   {
     var finalNum = STRING_EMPTY;
-    alert("i'm in for loop ounce")
+    // alert("i'm in for loop ounce")
     found = ingData.indexOf(commonRecipeUnits.ounce[i]);
     if(found != -1)
     {
-      alert("i'm Found in loop ounce")
+      // alert("i'm Found in loop ounce")
       var arr = ingData.split(commonRecipeUnits.ounce[i]);
       console.log(arr);
       console.log(arr[0]);
@@ -733,15 +733,15 @@ function scanOunce(ingData)
       console.log(isParenthesis);
       if (isParenthesis != -1)
       {
-        alert("i'm Found in loop ounce - parenthesis")
+        // alert("i'm Found in loop ounce - parenthesis")
         var vicinityParenthesis = arr[0].split(OPEN_PAREN);
-        alert(vicinityParenthesis[0])
+        // alert(vicinityParenthesis[0])
         var vicinityRight = vicinityParenthesis[vicinityParenthesis.length - 1];
         console.log(vicinityRight)
         var vicinityHyphen = (vicinityRight.includes(HYPHEN)) ? vicinityRight.split(HYPHEN) : null;
         // console.log(vicinityHyphen)
         if(vicinityHyphen != null) {
-          alert(parseInt(vicinityHyphen[0]) / 16);
+          // alert(parseInt(vicinityHyphen[0]) / 16);
           lineDesc = {
             original : ingData,
             preceedingNum: vicinityParenthesis[0] + OPEN_PAREN,
@@ -893,13 +893,13 @@ function displayConvertedEntity(unit_data, lineDesc){
     case 1:
       // // lineDescTextAfter = lineDesc.preceedingNum + unit_data.result + SPACE + HYPHEN + SPACE + toUnit + lineDesc.desc;
       lineDescTextAfter = lineDesc.preceedingNum + "0.18" + SPACE + toUnit + SPACE + lineDesc.desc;
-      alert("case 1");
+      // alert("case 1");
       break;
     case 2:
     case 3:
     case 4:
     case 5:
-      alert ("case 2 to 5")
+      // alert ("case 2 to 5")
       // // lineDescTextAfter = unit_data.result + toUnit + lineDesc.desc;
       lineDescTextAfter = "0.47" + SPACE + toUnit + SPACE + lineDesc.desc;
       break;

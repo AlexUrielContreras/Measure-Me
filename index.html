@@ -101,8 +101,7 @@
             </div>
           </form>
           <div class="center-align msg-box" id="message_box"> </div>
-          <!-- <div class="recent-searches recent-box" id="recently"> where I am on loading </div> -->
-          <!-- <div class="recent-searches recent-box" id="recently"> </div> -->
+          
           <div class="row content-box" id="history_box" >
             <div class="col s12 .recent-box" id="recently" >
 
@@ -192,13 +191,11 @@
      function expandHistory(){
         alert($("#recently").height())
         if($("#recently").height() <= 130){
-          alert("im too short")
           $("#recently").height(450);
           $("#btnExpand").text("Collapse")
          
         }
         else{
-          alert("im too tall")
           $("#recently").height(125);
           $("#btnExpand").text("Expand")
           
