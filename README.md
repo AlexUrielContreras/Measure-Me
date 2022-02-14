@@ -1,7 +1,6 @@
-### Student's Full Name: Tran, Huong K. (aka Kimberly)  
 ## KU Coding Bootcamp  
-#### Group Project I 
-##### Members: Alex C., Ethen B., Kimberly T.
+### Group Project I 
+#### Members: Alex C., Ethen B., Kimberly T.
 
 
 ##### Live URL:  
@@ -13,3 +12,4 @@
 
 ##### Measure Me is the title of our project where we’ve worked on behalf of a food distributor company to utilize server-side API Edamam to get an abundan resouces of text data that describe the many food recipes out there for which the company's customers could search for their shopping convenience. We also looked to use other APIs (GIPHY API, Neutrinoapi API)  that could help us build a unit converter on the side that is deemed to help customers and visitors to quatitize their shopping list in the unit measurement of their desire, Imperial to Metric and vise versa.
 #####------------------------------------------------------------------------------------------------------------
+###### Student's Full Name: Tran, Huong K. (aka Kimberly) 
