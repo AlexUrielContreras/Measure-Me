@@ -1,5 +1,6 @@
 body {
     background: linear-gradient(#edf7fc, transparent);
+  
   }
 
 .brand-logo {
@@ -62,7 +63,7 @@ input:focus{
     color:#28a191
 }
 
-.recipe-box, .unit-box, .msg-box, .recent-box{
+.recipe-box, .unit-box, .msg-box{
     margin-top: 20px;
     border: 1px dashed #9e9e9e; border-radius: 5px;
     padding-right:0;
@@ -73,8 +74,11 @@ input:focus{
 }
 
 .recent-box{
-    height: 100px;
+    margin-top: 20px;
+    height: 125px;
     min-height: 70px;
+    padding-right:0;
+   
 }
 
 .recipe-box p{
@@ -139,7 +143,7 @@ input:focus{
 .unit-box .quantity_line:hover{
     border-radius: 5px;  
     border: none !important;
-    background-color: transparent; 
+    background-color: white;
     width: 98%;   
     font-family: inherit;
     font-size: 16px;

@@ -953,7 +953,7 @@ var getRecipeEntity = function(recipephrase, searchOptions)
 
   // local storage implementation
   searchRecord.push(searchByClicking);
-  localStorage.setItem(searchByClicking.searchTerm + UNDERSCORE + searchByClicking.searchID, JSON.stringify(searchByClicking));
+  localStorage.setItem(searchByClicking.searchTerm + UNDERSCORE + CVTR_APP_ID + searchByClicking.searchID, JSON.stringify(searchByClicking));
 
   var apiFoodUrl = STRING_EMPTY;
   // -- cuisine-type defaults to American
@@ -1094,6 +1094,9 @@ function renderItemSearchHistory(){
      // console.log($("#pole_blue_theme").children())
      // setHistoryColumnVisibility(currentLocalStorageSize);
   }
+  else{
+    hideHistoryController();
+  }
 }
 
 // Handle submission as button is of type submit not type button
@@ -1110,7 +1113,7 @@ var formSubmitHandler = function(event){
     $("#btn").removeClass('modal-trigger');        
    
     getRecipeEntity(recipephrase, searchOptions);
-    
+    $("#recently").height(100); 
   } 
   else {
     // Prompt for required input
@@ -1178,8 +1181,8 @@ var quickFetchUnit = function()
 
 }
 
-// renderLandingPage()
-quickFetchUnit();
+renderLandingPage()
+
 
 
 
